@@ -78,16 +78,19 @@ n <- ncol(S)
 
 h <- round(trm*Ts)  #trimming
 # transform the data
-#transf_out <- transf(y,z,S)
+transf_out <- transf(y,z,S)
 
-#maty <- transf_out$maty
-#matz <- transf_out$matz
+maty <- transf_out$maty
+matz <- transf_out$matz
 
 i <- 1 # number of breaks
 
 #est(maty,matz,n,i,Ts,trm,diag(ncol(matz)*(i+1)),brbeta, brv)
 
 
+
+
+matU <- mlef(i,maty,matz,h,2,Ts)
 
 
 

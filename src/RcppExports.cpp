@@ -11,55 +11,55 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpparma_hello_world
-arma::mat rcpparma_hello_world();
-RcppExport SEXP _multiMNbreaks_rcpparma_hello_world() {
+// reshapeg
+arma::mat reshapeg(arma::mat amat, int a, int b);
+RcppExport SEXP _multiMNbreaks_reshapeg(SEXP amatSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
+    Rcpp::traits::input_parameter< arma::mat >::type amat(amatSEXP);
+    Rcpp::traits::input_parameter< int >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(reshapeg(amat, a, b));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _multiMNbreaks_rcpparma_outerproduct(SEXP xSEXP) {
+// mlef
+arma::mat mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last);
+RcppExport SEXP _multiMNbreaks_mlef(SEXP startSEXP, SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP lastSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type last(lastSEXP);
+    rcpp_result_gen = Rcpp::wrap(mlef(start, maty, matz, h, n, last));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _multiMNbreaks_rcpparma_innerproduct(SEXP xSEXP) {
+// mlebigvec
+arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt);
+RcppExport SEXP _multiMNbreaks_mlebigvec(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _multiMNbreaks_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    Rcpp::traits::input_parameter< arma::mat >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    rcpp_result_gen = Rcpp::wrap(mlebigvec(maty, matz, h, n, bigt));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_multiMNbreaks_rcpparma_hello_world", (DL_FUNC) &_multiMNbreaks_rcpparma_hello_world, 0},
-    {"_multiMNbreaks_rcpparma_outerproduct", (DL_FUNC) &_multiMNbreaks_rcpparma_outerproduct, 1},
-    {"_multiMNbreaks_rcpparma_innerproduct", (DL_FUNC) &_multiMNbreaks_rcpparma_innerproduct, 1},
-    {"_multiMNbreaks_rcpparma_bothproducts", (DL_FUNC) &_multiMNbreaks_rcpparma_bothproducts, 1},
+    {"_multiMNbreaks_reshapeg", (DL_FUNC) &_multiMNbreaks_reshapeg, 3},
+    {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 6},
+    {"_multiMNbreaks_mlebigvec", (DL_FUNC) &_multiMNbreaks_mlebigvec, 5},
     {NULL, NULL, 0}
 };
 
