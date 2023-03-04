@@ -11,6 +11,17 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// vecr
+arma::vec vecr(arma::mat x);
+RcppExport SEXP _multiMNbreaks_vecr(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(vecr(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // reshapeg
 arma::mat reshapeg(arma::mat amat, int a, int b);
 RcppExport SEXP _multiMNbreaks_reshapeg(SEXP amatSEXP, SEXP aSEXP, SEXP bSEXP) {
@@ -25,8 +36,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // mlef
-arma::mat mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last);
-RcppExport SEXP _multiMNbreaks_mlef(SEXP startSEXP, SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP lastSEXP) {
+arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last, int maxit);
+RcppExport SEXP _multiMNbreaks_mlef(SEXP startSEXP, SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP lastSEXP, SEXP maxitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,7 +47,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type h(hSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type last(lastSEXP);
-    rcpp_result_gen = Rcpp::wrap(mlef(start, maty, matz, h, n, last));
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    rcpp_result_gen = Rcpp::wrap(mlef(start, maty, matz, h, n, last, maxit));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -57,8 +69,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_multiMNbreaks_vecr", (DL_FUNC) &_multiMNbreaks_vecr, 1},
     {"_multiMNbreaks_reshapeg", (DL_FUNC) &_multiMNbreaks_reshapeg, 3},
-    {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 6},
+    {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 7},
     {"_multiMNbreaks_mlebigvec", (DL_FUNC) &_multiMNbreaks_mlebigvec, 5},
     {NULL, NULL, 0}
 };

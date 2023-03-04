@@ -73,7 +73,7 @@ hetq <- 0
 # /*Call the main procedure*/
 #res <- mainp(m,ncol(S),z,y,ncol(y),trm,Ts,brv,brbeta,vauto,hetq,prewhit)
 
-n <- ncol(S)
+n <- ncol(y)
 
 
 h <- round(trm*Ts)  #trimming
@@ -85,12 +85,12 @@ matz <- transf_out$matz
 
 i <- 1 # number of breaks
 
-#est(maty,matz,n,i,Ts,trm,diag(ncol(matz)*(i+1)),brbeta, brv)
+est(maty,matz,n,i,Ts,trm,diag(ncol(matz)*(i+1)),brbeta, brv)
 
 
 
 
-matU <- mlef(i,maty,matz,h,2,Ts)
+vecmle <- mlef(i,maty,matz,h,2,Ts)
 
 
 

@@ -4,7 +4,7 @@
 \alias{mlef}
 \title{Computing MLE based on a recursive formula}
 \usage{
-mlef(start, maty, matz, h, n, last)
+mlef(start, maty, matz, h, n, last, maxit = 1000L)
 }
 \arguments{
 \item{\code{start}}{starting entry of the sample used.}
@@ -26,7 +26,7 @@ It returns a vector of MLE of length last-start+1 (stored for convenience in a v
 This procedure computes MLE from a data set that starts at date 'start' and ends at date 'last'.
 }
 \details{
-Note that that the first h-1 elements have no meaning, usually is initialized as zero and the maximum number of iterations allowed is 1000.
+Note that that the first h-1 elements have no meaning, usually is initialized as zero.
 }
 \references{
 Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
