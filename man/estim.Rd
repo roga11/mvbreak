@@ -25,5 +25,8 @@ List of class \code{} (\code{S3} object) with attributes including:
 }
 }
 \description{
-procedure that estimates the coefficients under the optimal partitions
+procedure that estimates the coefficients under the optimal partitions.
+}
+\details{
+See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
 }

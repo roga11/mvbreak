@@ -60,3 +60,40 @@ mlebigvec <- function(maty, matz, h, n, bigt) {
     .Call(`_multiMNbreaks_mlebigvec`, maty, matz, h, n, bigt)
 }
 
+#' @title Standard normal errors using box Muller 
+#' 
+#' @description This function generates uncorrelated standard normal processes using box Muller method.
+#' 
+#' @param \code{n} Integer determining the length of the process to be simulated
+#' @param \code{q}  Integer determining the number of processes to be simulated
+#' 
+#' @return A (\code{T x q}) matrix of standard normal distributed errors
+#' 
+#' @keywords internal
+#' 
+#' @export
+randSN <- function(n, q) {
+    .Call(`_multiMNbreaks_randSN`, n, q)
+}
+
+#' @title Simulate normally distributed process
+#' 
+#' @description This function simulates a normally distributed process.
+#' 
+#' @param mdl_h0 List containing the following DGP parameters
+#' \itemize{
+#'   \item{\code{n}: }{Length of series.}
+#'   \item{\code{mu}: }{A (\code{q x 1}) vector of means.}
+#'   \item{\code{sigma}: }{A (\code{q x q}) covariance matrix.}
+#'   \item{\code{q}: }{Number of series.}
+#'   \item{\code{eps}: }{An optional (\code{T+burnin x q}) matrix with standard normal errors to be used. Errors will be generated if not provided.}
+#' }
+#' @param burnin Number of simulated observations to remove from beginning. Default is \code{100}.
+#' 
+#' @return List with simulated series and its DGP parameters.
+#' 
+#' @export
+simuNorm <- function(mdl_h0, burnin = 0L) {
+    .Call(`_multiMNbreaks_simuNorm`, mdl_h0, burnin)
+}
+

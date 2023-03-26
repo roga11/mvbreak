@@ -4,20 +4,26 @@
 \alias{est}
 \title{Model estimation}
 \usage{
-est(maty, matz, n, m, bigt, trm, R, brbeta, brv)
+est(maty, matz, n, m, bigt, trm, R = NULL, brbeta = 1, brv = 1)
 }
 \arguments{
-\item{y}{dependent variable}
+\item{maty}{dependent variable}
 
-\item{z}{independent variable}
+\item{matz}{independent variable}
 
-\item{q:}{total number of regression coefficients in a single regime}
+\item{n}{number of equations.}
 
-\item{bigt:}{sample size
-\itemize{
-  \item{\code{}: }{. Default is \code{}.}
-  \item{\code{}: }{. Default is \code{}.}
-}}
+\item{m}{number of breaks.}
+
+\item{bigt}{sample size}
+
+\item{trm}{trimming parameter}
+
+\item{R}{matrix of restrictions}
+
+\item{brbeta}{Indicator. 1 if coefficients can change, 0 otherwise.}
+
+\item{brv}{Indicator. 1 if covariance matrix can change, 0 otherwise.}
 }
 \value{
 List of class \code{} (\code{S3} object) with attributes including:
@@ -27,7 +33,8 @@ List of class \code{} (\code{S3} object) with attributes including:
 }
 }
 \description{
-This procedure estimates the breaks and the coefficients using the restrictions, based on the iterative method
+This procedure estimates the breaks and the coefficients using the restrictions, 
+based on the iterative method described in section 4.2 of Qu & Perron (2007).
 }
 \seealso{
 \code{\link{}}

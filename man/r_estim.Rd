@@ -38,6 +38,9 @@ List of class \code{} (\code{S3} object) with attributes including:
 Procedure that estimates the model allowing cross regime restrictions.
 }
 \details{
+See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+}
+\note{
 For the current version of the code, only linear restriction is allowed. 
 The model includes partial structural change and block-partial structural change models.
 The estimation of based on iterative feasible GLS

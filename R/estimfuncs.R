@@ -1,3 +1,85 @@
+
+#' @title Vectorize 
+#' 
+#' @description procedure to jointly estimates the coefficient and variance break dates following section 5.1 of Qu and Perron (2007). The code follows est.m of Qu and Perron (2007)
+#' 
+#' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+#' 
+#' @export
+vec <- function(a){
+  v <- c(a)  
+  return(v)
+}
+
+
+#' @title Diagonal partition of matrix with m breaks
+#' 
+#' @description procedure to construct the diagonal partition of matz with m break at dates b.
+#' 
+#' @references Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+#' @references Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+#' @references Qu & Perron (2007) Econometrica
+#' @references PYZ (2020) QE
+#' 
+#' @export
+pzbar <- function(matz,m,bb,bigt){
+  nt <- nrow(matz)
+  q1 <- ncol(matz)
+  n <- nt/bigt
+  if (m==0){
+    stop("m=0, no break is allowed, procedure terminates")
+    matzb <- 0
+  }else{
+    matzb <- matrix(0,nt,(m+1)*q1)
+    matzb[1:(bb[1,1]*n),1:q1] <- matz[1:(bb[1,1]*n),]
+    i <- 2
+    while (i <=m){
+      matzb[(bb[i-1,1]*n+1):(bb[i,1]*n),((i-1)*q1+1):(i*q1)] <- matz[(bb[i-1,1]*n+1):(bb[i,1]*n),]
+      i <- i + 1 
+    }
+    matzb[(bb[m,1]*n+1):nt,(m*q1+1):((m+1)*q1)] <- matz[(bb[m,1]*n+1):nt,]
+  }
+  return(matzb)
+}
+
+#' @title Transform variables
+#' 
+#' @description Procedure that generates the matrix of regressors (matz) and that of the dependent variable (maty)
+#' 
+#' @param y dependent variable as a matrix, with the jth row containing observations at time j
+#' @param z regressors as a matrix, with the jth row containing
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'   \item{\code{maty}: }{dependent variable as a row vector, with the (i-1)*n+jth row containing ith observation for equation j.}
+#'   \item{\code{matz}: }{regressors as a matrix}
+#' }
+#' 
+#' @export  
+transf <- function(y,z,S=NULL){
+  # WRITE IN C++ SINCE LOOPING OVER T
+  In  <- diag(ncol(y))
+  maty <- as.matrix(y[1,])
+  if (is.null(S)==FALSE){
+    matz <- kronecker(In, t(z[1,]))%*%S 
+  }else{
+    matz <- kronecker(In, t(z[1,]))
+  }
+  for (i in 2:nrow(y)){
+    maty <- rbind(maty, as.matrix(y[i,]))
+    
+    if (is.null(S)==FALSE){
+      matz_tmp <- kronecker(In, t(z[i,]))%*%S 
+    }else{
+      matz_tmp <- kronecker(In, t(z[i,]))
+    }
+    matz <- rbind(matz, matz_tmp)
+  } 
+  return(list(maty = maty, matz = matz))
+}
+
+
+
 #' @title optimal break partitions for a given segment
 #' 
 #' @description procedure to obtain an optimal one break partitions for a segment that 
@@ -73,7 +155,7 @@ partim1 <- function(start,b1,b2,last,bigvec2,bigt,n){
   for (j in b1:b2){
     m1 <- t(as.matrix(bigvec2[start:j,]))%*%as.matrix(bigvec2[start:j,])/(j-start+1)
     m2 <- t(as.matrix(bigvec2[(1*bigt+j+1):(1*bigt+last),]))%*%as.matrix(bigvec2[(1*bigt+j+1):(1*bigt+last),])/(last-j+1)
-    dvec[j,1]=((last-start+1)*n/2)*(log(2*pi)+1)+((j-start+1)/2)*log(det(m1))+((last-j+1)/2)*log(det(m2)) 
+    dvec[j,1] <- ((last-start+1)*n/2)*(log(2*pi)+1)+((j-start+1)/2)*log(det(m1))+((last-j+1)/2)*log(det(m2)) 
   }
   optmle <- t(min(dvec[b1:b2,1]))
   minindcdvec <- which.min(dvec[b1:b2,1])
@@ -113,13 +195,13 @@ residseg <- function(maty,matz,nbeta,q,n,m){
 
 
 
-#' @title Dating global break dates using log-likelihood 
+#' @title Dating global break dates using log-likelihood
 #' 
-#' @description Find the optimal partition allowing m breaks (unrestricted model)
+#' @description Find the optimal partition allowing m breaks, unrestricted model
 #' 
 #' @param maty vector dependent variables, with the (i-1)*n+j th element corresponding to the ith obseration from the jth equation included in the regression
 #' @param matz matrix of independent variables, arranged in the same manner as maty. The number of columns corresponds to the number of basic parameters included in the regression
-#' @param h    mimunum number of observations in each segment
+#' @param h    minimum number of observations in each segment
 #' @param m    number of breaks.
 #' @param bigt number of observations in the sample
 #' 
@@ -142,8 +224,6 @@ dating_mle <- function(maty,matz,n,h,m,bigt){
   
   
   bigvec  <- mlebigvec(maty, matz, h, n, bigt)
-  
-  mlebigvec(maty, matz, h, n, bigt)
   
   # Section that applies the dynamic programming algorithm to look for the optimal breaks.
   # The first case is when m = 1. Here the dynamic programming algorithm is not
@@ -208,7 +288,7 @@ dating_mle <- function(maty,matz,n,h,m,bigt){
 
 #' @title Dating global break dates using log-likelihood 
 #' 
-#' @description Find the optimal partition allowing m breaks (unrestricted model)
+#' @description Find the optimal partition allowing m breaks
 #' 
 #' @param bigresvec segmented residual matrix
 #' @param h    minimum number of observations in each segment
@@ -234,7 +314,7 @@ dating_m2 <- function(bigvec2,h,m,n,bigt){
   if (m == 1){
     partim1_out <- partim1(1,h,bigt-h,bigt,bigvec2,bigt,n)
     datevec[1,1] <- partim1_out$bdate
-    global_[1,1] <-  partim1_out$optmle
+    glob[1,1] <-  partim1_out$optmle
   }else{
     # First loop. Looking for the optimal one break partitions for break 
     # dates between h and T-h. j1 is the last date of the segments.
@@ -295,7 +375,9 @@ dating_m2 <- function(bigvec2,h,m,n,bigt){
 
 #' @title Model estimation (Unrestricted)
 #' 
-#' @description procedure that estimates the coefficients under the optimal partitions
+#' @description procedure that estimates the coefficients under the optimal partitions. 
+#' 
+#' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
 #' 
 #' @param maty dependent variable.
 #' @param matz independent variable.
@@ -345,7 +427,9 @@ estim <- function(maty,matz,n,m,br){
 #' 
 #' @description Procedure that estimates the model allowing cross regime restrictions.
 #' 
-#' @details For the current version of the code, only linear restriction is allowed. 
+#' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+#' 
+#' @note For the current version of the code, only linear restriction is allowed. 
 #' The model includes partial structural change and block-partial structural change models.
 #' The estimation of based on iterative feasible GLS
 #' 
@@ -450,7 +534,7 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
     for (k in 2:(m+1)){
       nbeta <- rbind(nbeta,b)
     }
-  }else if(brv!=1 & brbeta==1){
+  }else if (brv!=1 & brbeta==1){
     # Here we consider changes in coefficients only
     vvar <- 0
     for (k in 1:(m+1)){
@@ -491,7 +575,8 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
 
 #' @title Model estimation
 #' 
-#' @description This procedure estimates the breaks and the coefficients using the restrictions, based on the iterative method
+#' @description This procedure estimates the breaks and the coefficients using the restrictions, 
+#' based on the iterative method described in section 4.2 of Qu & Perron (2007).
 #' 
 #' @param maty dependent variable
 #' @param matz independent variable
@@ -512,8 +597,11 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
 #' @seealso \code{\link{}}
 #' 
 #' @export
-est <- function(maty,matz,n,m,bigt,trm,R,brbeta,brv){
+est <- function(maty,matz,n,m,bigt,trm, R = NULL ,brbeta = 1,brv = 1){
   q <- ncol(matz)
+  if (is.null(R)){
+    R <- diag(q*(m+1))
+  }
   h <- round(trm*bigt)
   tstar <- bigt
   datemle_out <- dating_mle(maty,matz,n,h,m,bigt)
@@ -523,11 +611,11 @@ est <- function(maty,matz,n,m,bigt,trm,R,brbeta,brv){
   
   # find the optimal partition of  the sample without restrictions 
   # on the coefficients, serves as the starting value of the 
-  # iterative procedure@
+  # iterative procedure
   br <- datevec[,m] #break dates
   restim_out <- r_estim(maty,matz,bigt,n,m,datevec[,m],R,brbeta,brv)
   rbeta <- restim_out$beta
-  #rvv <- restim_out$vv  # not used 
+  rvv <- restim_out$vv  # not used 
   
   # now find optimal partitions under the estimated coefficients
   diff <- 0
@@ -544,9 +632,9 @@ est <- function(maty,matz,n,m,bigt,trm,R,brbeta,brv){
       br <- datevec[,m]
       restim_out <- r_estim(maty,matz,bigt,n,m,br,R,brbeta,brv)
       rbeta <- restim_out$beta
-      #rvv <- restim_out$vv  # not used 
+      rvv <- restim_out$vv  # not used 
       diff <-diff + 1               
     }
   }
-  return(list(dx = dx, rbeta = rbeta))
+  return(list(dx = as.matrix(dx), rbeta = rbeta, rvv = rvv))
 }

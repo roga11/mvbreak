@@ -11,7 +11,7 @@ dating_mle(maty, matz, n, h, m, bigt)
 
 \item{matz}{matrix of independent variables, arranged in the same manner as maty. The number of columns corresponds to the number of basic parameters included in the regression}
 
-\item{h}{mimunum number of observations in each segment}
+\item{h}{minimum number of observations in each segment}
 
 \item{m}{number of breaks.}
 
@@ -26,7 +26,7 @@ List of class \code{} (\code{S3} object) with attributes including:
 }
 }
 \description{
-Find the optimal partition allowing m breaks (unrestricted model)
+Find the optimal partition allowing m breaks, unrestricted model
 }
 \references{
 Qu Perron (2007)

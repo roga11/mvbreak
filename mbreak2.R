@@ -29,7 +29,7 @@ m <- 2
 # If you have restrictions, specify the matrix R (here only the constants (first
 # regressor) is allowed to change in each equation). 
 # if you do not have restrictions, set R=eye(cols(_S)*(m+1))@
-
+# NOTE: This R is for when m=2
 R <- rbind(c(1,0,0,0,0,0,0,0),
            c(0,1,0,0,0,0,0,0),
            c(0,0,1,0,0,0,0,0),
@@ -42,6 +42,8 @@ R <- rbind(c(1,0,0,0,0,0,0,0),
            c(0,1,0,0,0,0,0,0),
            c(0,0,0,0,0,0,0,1),
            c(0,0,0,1,0,0,0,0))
+
+
 
 # set the trimming parameter that specifies the minimal length of a segment as a proportion of the sample size.
 trm <- 0.2
@@ -85,12 +87,18 @@ matz <- transf_out$matz
 
 i <- 1 # number of breaks
 
-est(maty,matz,n,i,Ts,trm,diag(ncol(matz)*(i+1)),brbeta, brv)
+mdll <- est(maty,matz,n,i,Ts,trm,diag(ncol(matz)*(i+1)),brbeta, brv)
 
 
 
 
-vecmle <- mlef(i,maty,matz,h,2,Ts)
+
+
+
+
+
+
+
 
 
 

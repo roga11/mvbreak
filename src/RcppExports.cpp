@@ -67,12 +67,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// randSN
+arma::mat randSN(int n, int q);
+RcppExport SEXP _multiMNbreaks_randSN(SEXP nSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(randSN(n, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simuNorm
+List simuNorm(List mdl_h0, int burnin);
+RcppExport SEXP _multiMNbreaks_simuNorm(SEXP mdl_h0SEXP, SEXP burninSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type mdl_h0(mdl_h0SEXP);
+    Rcpp::traits::input_parameter< int >::type burnin(burninSEXP);
+    rcpp_result_gen = Rcpp::wrap(simuNorm(mdl_h0, burnin));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_multiMNbreaks_vecr", (DL_FUNC) &_multiMNbreaks_vecr, 1},
     {"_multiMNbreaks_reshapeg", (DL_FUNC) &_multiMNbreaks_reshapeg, 3},
     {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 7},
     {"_multiMNbreaks_mlebigvec", (DL_FUNC) &_multiMNbreaks_mlebigvec, 5},
+    {"_multiMNbreaks_randSN", (DL_FUNC) &_multiMNbreaks_randSN, 2},
+    {"_multiMNbreaks_simuNorm", (DL_FUNC) &_multiMNbreaks_simuNorm, 2},
     {NULL, NULL, 0}
 };
 

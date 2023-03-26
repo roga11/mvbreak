@@ -25,7 +25,7 @@ List of class \code{} (\code{S3} object) with attributes including:
 }
 }
 \description{
-Find the optimal partition allowing m breaks (unrestricted model)
+Find the optimal partition allowing m breaks
 }
 \references{
 Qu Perron (2007)
