@@ -4,7 +4,7 @@
 \alias{seqlr}
 \title{sequential likelihood ratio}
 \usage{
-seqlr(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, trm)
+seqlr(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, trm, R_ls = NULL)
 }
 \description{
 procedure that computes the supF(l+1|l) test l=nseg-1. The l breaks

@@ -4,7 +4,19 @@
 \alias{est}
 \title{Model estimation}
 \usage{
-est(maty, matz, n, m, bigt, trm, R = NULL, brbeta = 1, brv = 1)
+est(
+  maty,
+  matz,
+  n,
+  m,
+  bigt,
+  trm,
+  R = NULL,
+  brbeta = 1,
+  brv = 1,
+  h = NULL,
+  workers = 0
+)
 }
 \arguments{
 \item{maty}{dependent variable}

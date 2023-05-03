@@ -22,6 +22,53 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// transf_cpp
+List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL);
+RcppExport SEXP _multiMNbreaks_transf_cpp(SEXP ySEXP, SEXP zSEXP, SEXP SSEXP, SEXP S_NULLSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
+    Rcpp::traits::input_parameter< int >::type S_NULL(S_NULLSEXP);
+    rcpp_result_gen = Rcpp::wrap(transf_cpp(y, z, S, S_NULL));
+    return rcpp_result_gen;
+END_RCPP
+}
+// parti
+List parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt);
+RcppExport SEXP _multiMNbreaks_parti(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvecSEXP, SEXP bigtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< int >::type b1(b1SEXP);
+    Rcpp::traits::input_parameter< int >::type b2(b2SEXP);
+    Rcpp::traits::input_parameter< int >::type last(lastSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type bigvec(bigvecSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    rcpp_result_gen = Rcpp::wrap(parti(start, b1, b2, last, bigvec, bigt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// partim1
+List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, int n);
+RcppExport SEXP _multiMNbreaks_partim1(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvec2SEXP, SEXP bigtSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< int >::type b1(b1SEXP);
+    Rcpp::traits::input_parameter< int >::type b2(b2SEXP);
+    Rcpp::traits::input_parameter< int >::type last(lastSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type bigvec2(bigvec2SEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(partim1(start, b1, b2, last, bigvec2, bigt, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // reshapeg
 arma::mat reshapeg(arma::mat amat, int a, int b);
 RcppExport SEXP _multiMNbreaks_reshapeg(SEXP amatSEXP, SEXP aSEXP, SEXP bSEXP) {
@@ -67,6 +114,107 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mlebigvec_forpar
+arma::vec mlebigvec_forpar(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end);
+RcppExport SEXP _multiMNbreaks_mlebigvec_forpar(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP startSEXP, SEXP endSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    rcpp_result_gen = Rcpp::wrap(mlebigvec_forpar(maty, matz, h, n, bigt, start, end));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mlebigvec_forpar2
+arma::vec mlebigvec_forpar2(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end);
+RcppExport SEXP _multiMNbreaks_mlebigvec_forpar2(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP startSEXP, SEXP endSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    rcpp_result_gen = Rcpp::wrap(mlebigvec_forpar2(maty, matz, h, n, bigt, start, end));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dating_mle
+List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt, int workers);
+RcppExport SEXP _multiMNbreaks_dating_mle(SEXP ySEXP, SEXP zSEXP, SEXP nSEXP, SEXP hSEXP, SEXP mSEXP, SEXP bigtSEXP, SEXP workersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< int >::type workers(workersSEXP);
+    rcpp_result_gen = Rcpp::wrap(dating_mle(y, z, n, h, m, bigt, workers));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dating_m2
+List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt);
+RcppExport SEXP _multiMNbreaks_dating_m2(SEXP bigvec2SEXP, SEXP hSEXP, SEXP mSEXP, SEXP nSEXP, SEXP bigtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type bigvec2(bigvec2SEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    rcpp_result_gen = Rcpp::wrap(dating_m2(bigvec2, h, m, n, bigt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// estim
+List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br);
+RcppExport SEXP _multiMNbreaks_estim(SEXP matySEXP, SEXP matzSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type br(brSEXP);
+    rcpp_result_gen = Rcpp::wrap(estim(maty, matz, n, m, br));
+    return rcpp_result_gen;
+END_RCPP
+}
+// r_estim
+List r_estim(arma::vec maty, arma::mat matz, int bigt, int n, int m, arma::vec br, arma::mat R, int brbeta, int brv, int maxit);
+RcppExport SEXP _multiMNbreaks_r_estim(SEXP matySEXP, SEXP matzSEXP, SEXP bigtSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP, SEXP RSEXP, SEXP brbetaSEXP, SEXP brvSEXP, SEXP maxitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type br(brSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< int >::type brbeta(brbetaSEXP);
+    Rcpp::traits::input_parameter< int >::type brv(brvSEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    rcpp_result_gen = Rcpp::wrap(r_estim(maty, matz, bigt, n, m, br, R, brbeta, brv, maxit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // randSN
 arma::mat randSN(int n, int q);
 RcppExport SEXP _multiMNbreaks_randSN(SEXP nSEXP, SEXP qSEXP) {
@@ -91,14 +239,149 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// critval
+arma::vec critval(int k, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_critval(SEXP kSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(critval(k, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// critval2
+arma::mat critval2(int k, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_critval2(SEXP kSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(critval2(k, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// critval3
+arma::vec critval3(int m, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_critval3(SEXP mSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(critval3(m, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// critval4
+arma::vec critval4(int m, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_critval4(SEXP mSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(critval4(m, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// seqC
+arma::vec seqC(int from, int to, double by);
+RcppExport SEXP _multiMNbreaks_seqC(SEXP fromSEXP, SEXP toSEXP, SEXP bySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< int >::type to(toSEXP);
+    Rcpp::traits::input_parameter< double >::type by(bySEXP);
+    rcpp_result_gen = Rcpp::wrap(seqC(from, to, by));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bp_supF_critval
+arma::vec bp_supF_critval(int m, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_bp_supF_critval(SEXP mSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(bp_supF_critval(m, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bp_supSeq_critval
+arma::vec bp_supSeq_critval(int l, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_bp_supSeq_critval(SEXP lSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type l(lSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(bp_supSeq_critval(l, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bp_UDmax_critval
+arma::vec bp_UDmax_critval(int M, int q, double trm, int n, int B);
+RcppExport SEXP _multiMNbreaks_bp_UDmax_critval(SEXP MSEXP, SEXP qSEXP, SEXP trmSEXP, SEXP nSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type M(MSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type trm(trmSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(bp_UDmax_critval(M, q, trm, n, B));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_multiMNbreaks_vecr", (DL_FUNC) &_multiMNbreaks_vecr, 1},
+    {"_multiMNbreaks_transf_cpp", (DL_FUNC) &_multiMNbreaks_transf_cpp, 4},
+    {"_multiMNbreaks_parti", (DL_FUNC) &_multiMNbreaks_parti, 6},
+    {"_multiMNbreaks_partim1", (DL_FUNC) &_multiMNbreaks_partim1, 7},
     {"_multiMNbreaks_reshapeg", (DL_FUNC) &_multiMNbreaks_reshapeg, 3},
     {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 7},
     {"_multiMNbreaks_mlebigvec", (DL_FUNC) &_multiMNbreaks_mlebigvec, 5},
+    {"_multiMNbreaks_mlebigvec_forpar", (DL_FUNC) &_multiMNbreaks_mlebigvec_forpar, 7},
+    {"_multiMNbreaks_mlebigvec_forpar2", (DL_FUNC) &_multiMNbreaks_mlebigvec_forpar2, 7},
+    {"_multiMNbreaks_dating_mle", (DL_FUNC) &_multiMNbreaks_dating_mle, 7},
+    {"_multiMNbreaks_dating_m2", (DL_FUNC) &_multiMNbreaks_dating_m2, 5},
+    {"_multiMNbreaks_estim", (DL_FUNC) &_multiMNbreaks_estim, 5},
+    {"_multiMNbreaks_r_estim", (DL_FUNC) &_multiMNbreaks_r_estim, 10},
     {"_multiMNbreaks_randSN", (DL_FUNC) &_multiMNbreaks_randSN, 2},
     {"_multiMNbreaks_simuNorm", (DL_FUNC) &_multiMNbreaks_simuNorm, 2},
+    {"_multiMNbreaks_critval", (DL_FUNC) &_multiMNbreaks_critval, 5},
+    {"_multiMNbreaks_critval2", (DL_FUNC) &_multiMNbreaks_critval2, 5},
+    {"_multiMNbreaks_critval3", (DL_FUNC) &_multiMNbreaks_critval3, 5},
+    {"_multiMNbreaks_critval4", (DL_FUNC) &_multiMNbreaks_critval4, 5},
+    {"_multiMNbreaks_seqC", (DL_FUNC) &_multiMNbreaks_seqC, 3},
+    {"_multiMNbreaks_bp_supF_critval", (DL_FUNC) &_multiMNbreaks_bp_supF_critval, 5},
+    {"_multiMNbreaks_bp_supSeq_critval", (DL_FUNC) &_multiMNbreaks_bp_supSeq_critval, 5},
+    {"_multiMNbreaks_bp_UDmax_critval", (DL_FUNC) &_multiMNbreaks_bp_UDmax_critval, 5},
     {NULL, NULL, 0}
 };
 

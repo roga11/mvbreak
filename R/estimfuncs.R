@@ -58,24 +58,30 @@ pzbar <- function(matz,m,bb,bigt){
 #' @export  
 transf <- function(y,z,S=NULL){
   # WRITE IN C++ SINCE LOOPING OVER T
-  In  <- diag(ncol(y))
-  maty <- as.matrix(y[1,])
-  if (is.null(S)==FALSE){
-    matz <- kronecker(In, t(z[1,]))%*%S 
+  if (is.null(S)==TRUE){
+    transf_outcpp <- transf_cpp(y,z,matrix(0,0,0),1)  
   }else{
-    matz <- kronecker(In, t(z[1,]))
+    transf_outcpp <- transf_cpp(y,z,S,0)  
   }
-  for (i in 2:nrow(y)){
-    maty <- rbind(maty, as.matrix(y[i,]))
-    
-    if (is.null(S)==FALSE){
-      matz_tmp <- kronecker(In, t(z[i,]))%*%S 
-    }else{
-      matz_tmp <- kronecker(In, t(z[i,]))
-    }
-    matz <- rbind(matz, matz_tmp)
-  } 
-  return(list(maty = maty, matz = matz))
+  # In  <- diag(ncol(y))
+  # maty <- as.matrix(y[1,])
+  # if (is.null(S)==FALSE){
+  #   matz <- kronecker(In, t(z[1,]))%*%S 
+  # }else{
+  #   matz <- kronecker(In, t(z[1,]))
+  # }
+  # for (i in 2:nrow(y)){
+  #   maty <- rbind(maty, as.matrix(y[i,]))
+  #   
+  #   if (is.null(S)==FALSE){
+  #     matz_tmp <- kronecker(In, t(z[i,]))%*%S 
+  #   }else{
+  #     matz_tmp <- kronecker(In, t(z[i,]))
+  #   }
+  #   matz <- rbind(matz, matz_tmp)
+  # } 
+  #out <- list(maty = maty, matz = matz)
+  return(transf_outcpp)
 }
 
 
@@ -98,7 +104,7 @@ transf <- function(y,z,S=NULL){
 #' @references PYZ (2020) QE
 #' 
 #' @export
-parti <- function(start,b1,b2,last,bigvec,bigt){
+parti_R <- function(start,b1,b2,last,bigvec,bigt){
   # procedure to obtain an optimal one break partitions for a segment that
   # starts at date start and ends at date last. It returns the optimal break
   # and the associated SSR.
@@ -150,7 +156,7 @@ parti <- function(start,b1,b2,last,bigvec,bigt){
 #' @references PYZ (2020) QE
 #' 
 #' @export
-partim1 <- function(start,b1,b2,last,bigvec2,bigt,n){
+partim1_R <- function(start,b1,b2,last,bigvec2,bigt,n){
   dvec <- matrix(0,bigt,1)   
   for (j in b1:b2){
     m1 <- t(as.matrix(bigvec2[start:j,]))%*%as.matrix(bigvec2[start:j,])/(j-start+1)
@@ -192,6 +198,32 @@ residseg <- function(maty,matz,nbeta,q,n,m){
 }
 
 
+#' @title MLE function
+#' 
+#' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+#' @export
+mlebigvec_par <- function(maty, matz, h, n, bigt, workers){
+  #bigvec <- matrix(0,bigt*(bigt+1)/2, 1)
+  N_i_f <- floor(bigt/workers)
+  N_worker_i <- matrix(rep(N_i_f, workers), workers, 1)
+  if (sum(N_worker_i)<bigt){
+    N_worker_i[1:(bigt-(N_i_f*workers))] <- N_worker_i[1:(bigt-(N_i_f*workers))] + 1  
+  }
+  # ----- Begin parallel simulations
+  segs <- c(0,cumsum(N_worker_i))
+  segs[length(segs)] <- segs[length(segs)] - h + 1
+  bigvec_all <- matrix(0,bigt*(bigt+1)/2,1)
+  `%dopar%` <- foreach::`%dopar%`
+  wi <- NULL 
+  bigvec_all <- foreach::foreach(wi = 1:workers, .inorder = TRUE, .packages = "multiMNbreaks") %dopar% {
+    start <- segs[wi] +1
+    end <- segs[wi+1] 
+    tmp <- mlebigvec_forpar(maty, matz, h, n, bigt, start, end)
+    tmp
+  }
+  bigvec <- as.matrix(c(unlist(bigvec_all),matrix(0,h*(h+1)/2-h,1)))
+  return(bigvec)
+}
 
 
 
@@ -215,15 +247,18 @@ residseg <- function(maty,matz,nbeta,q,n,m){
 #' @references Qu Perron (2007)
 #' 
 #' @export
-dating_mle <- function(maty,matz,n,h,m,bigt){
+dating_mle_R <- function(maty,matz,n,h,m,bigt,workers){
   datevec <- matrix(0, m, m)    # up-triangular matrix contains the estimated break dates for break numbers from one to m
   optdat  <- matrix(0, bigt, m) # row index corresponds to the ending dates, column index corresponds to the number of breaks permitted before the ending date the cell contains the optimal final break date
   optmle  <- matrix(0, bigt, m) # same as above, the cell contains the MML corresponding to that break structure
   dvec    <- matrix(0, bigt, 1) # the index is the date after which we inserting the break point. The cell contains the corresponding MML
   glob    <- matrix(0, m, 1)    # Global MML when i breaks are permitted
   
-  
-  bigvec  <- mlebigvec(maty, matz, h, n, bigt)
+  if (workers > 0){
+    bigvec  <- mlebigvec_par(maty, matz, h, n, bigt, workers)
+  }else{
+    bigvec  <- mlebigvec(maty, matz, h, n, bigt)  
+  }
   
   # Section that applies the dynamic programming algorithm to look for the optimal breaks.
   # The first case is when m = 1. Here the dynamic programming algorithm is not
@@ -305,7 +340,7 @@ dating_mle <- function(maty,matz,n,h,m,bigt){
 #' @references Qu Perron (2007)
 #' 
 #' @export
-dating_m2 <- function(bigvec2,h,m,n,bigt){
+dating_m2_R <- function(bigvec2,h,m,n,bigt){
   datevec <- matrix(0, m, m)    # up-triangular matrix contains the estimated break dates for break numbers from one to m
   optdat  <- matrix(0, bigt, m) # row index corresponds to the ending dates, column index corresponds to the number of breaks permitted before the ending date the cell contains the optimal final break date
   optmle  <- matrix(0, bigt, m) # same as above, the cell contains the MML corresponding to that break structure
@@ -392,7 +427,7 @@ dating_m2 <- function(bigvec2,h,m,n,bigt){
 #' }
 #' 
 #' @export
-estim <- function(maty,matz,n,m,br){
+estim_R <- function(maty,matz,n,m,br){
   beta <- matrix(0,m+1,ncol(matz))
   vv <- matrix(0,(m+1)*n,n)
   seg <- c(0,br,(nrow(maty)/n))
@@ -451,7 +486,7 @@ estim <- function(maty,matz,n,m,br){
 #' }
 #' 
 #' @export
-r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
+r_estim_R <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
   seg <- c(0,br,(nrow(maty)/n))
   # now estimate an unrestricted model
   estim_out <- estim(maty,matz,n,m,br)
@@ -487,7 +522,7 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
       for (k in 1:(m+1)){
         i <- seg[k]+1
         j <- seg[k+1]
-        ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1),pracma::pinv(vv[((k-1)*n+1):(k*n),]))
+        ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1), pracma::pinv(vv[((k-1)*n+1):(k*n),]))
       }
       b <- pracma::pinv(t(pmatz)%*%ibigv%*%pmatz)%*%t(pmatz)%*%ibigv%*%maty
       itr <- itr + 1
@@ -503,7 +538,7 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
     for (k in 1:(m+1)){
       i <- seg[k]+1
       j <- seg[k+1]
-      ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1),pracma::pinv(vv[((k-1)*n+1):(k*n),]))
+      ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1), pracma::pinv(vv[((k-1)*n+1):(k*n),]))
     }
     b <- pracma::pinv(t(matz)%*%ibigv%*%matz)%*%t(matz)%*%ibigv%*%maty
     bstar <- b + 10
@@ -524,7 +559,7 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
       for (k in 1:(m+1)){
         i <- seg[k]+1
         j <- seg[k+1]
-        ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1),pracma::pinv(vv[((k-1)*n+1):(k*n),]))
+        ibigv[((i-1)*n+1):(j*n),((i-1)*n+1):(j*n)] <- kronecker(diag(j-i+1), pracma::pinv(vv[((k-1)*n+1):(k*n),]))
       }
       b <- pracma::pinv(t(matz)%*%ibigv%*%matz)%*%t(matz)%*%ibigv%*%maty
       itr <- itr + 1
@@ -597,14 +632,18 @@ r_estim <- function(maty,matz,bigt,n,m,br,R,brbeta,brv,maxit=1000){
 #' @seealso \code{\link{}}
 #' 
 #' @export
-est <- function(maty,matz,n,m,bigt,trm, R = NULL ,brbeta = 1,brv = 1){
+est <- function(maty,matz,n,m,bigt,trm, R = NULL ,brbeta = 1,brv = 1, h = NULL, workers = 0){
   q <- ncol(matz)
   if (is.null(R)){
     R <- diag(q*(m+1))
   }
-  h <- round(trm*bigt)
+  if (is.null(h)){
+    h <- round(trm*bigt)  
+  }
   tstar <- bigt
-  datemle_out <- dating_mle(maty,matz,n,h,m,bigt)
+  
+  datemle_out <- dating_mle(maty,matz,n,h,m,bigt,workers)  
+  
   #global <- datemle_out$global # not used 
   datevec <- datemle_out$datevec
   #bigvec <- datemle_out$bigvec # not used

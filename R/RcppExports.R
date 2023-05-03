@@ -15,6 +15,77 @@ vecr <- function(x) {
     .Call(`_multiMNbreaks_vecr`, x)
 }
 
+#' @title Transform variables
+#' 
+#' @description Procedure that generates the matrix of regressors (matz) and that of the dependent variable (maty)
+#' 
+#' @param y dependent variable as a matrix, with the jth row containing observations at time j
+#' @param z regressors as a matrix, with the jth row containing
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'  \item{\code{maty}: }{dependent variable as a row vector, with the (i-1)*n+jth row containing ith observation for equation j.}
+#'  \item{\code{matz}: }{regressors as a matrix}
+#' }
+#' 
+#' @export  
+transf_cpp <- function(y, z, S, S_NULL) {
+    .Call(`_multiMNbreaks_transf_cpp`, y, z, S, S_NULL)
+}
+
+#' @title optimal break partitions for a given segment
+#' 
+#' @description procedure to obtain an optimal one break partitions for a segment that 
+#' starts at date start and ends at date last. It return the optimal break
+#' and the associated minus likelihood value (MML).
+#' 
+#' @param start beginning of the segment considered
+#' @param b1 first possible break date
+#' @param b2 last possible break date
+#' @param last end of segment considered
+#' @param bigvec vector of upper-triangular 
+#' 
+#' @references Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+#' @references Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+#' @references Qu Perron (2007) Econometrica
+#' @references PYZ (2020) QE
+#' 
+#' @export
+parti <- function(start, b1, b2, last, bigvec, bigt) {
+    .Call(`_multiMNbreaks_parti`, start, b1, b2, last, bigvec, bigt)
+}
+
+#' @title optimal break partition for one break
+#' 
+#' @description obtain an optimal one break partitions for a segment that starts at 
+#' date start and ends at date last,under the given coefficients.
+#' 
+#' @details the procedure is called only when number of breaks is one and \code{bigvec} must be a matrix of size \code{2*bigt} by \code{n} (i.e. residuals from \link{residseg}).
+#' 
+#' @param start beginning of the segment considered
+#' @param b1 first possible break date
+#' @param b2 last possible break date
+#' @param last end of segment considered
+#' @param bigvec vector of upper-triangular 
+#' @param bigresvec segmented residual matrix
+#' @param n number of equations
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'   \item{\code{optmle}: }{minus the value of the log-likelihood function under the optimal partitons.}
+#'   \item{\code{bdate}: }{the break date.}
+#' }
+#' 
+#' @references Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+#' @references Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+#' @references Qu Perron (2007) Econometrica
+#' @references PYZ (2020) QE
+#' 
+#' @export
+partim1 <- function(start, b1, b2, last, bigvec2, bigt, n) {
+    .Call(`_multiMNbreaks_partim1`, start, b1, b2, last, bigvec2, bigt, n)
+}
+
 #' @title Reshape mat 
 #' 
 #' @description This procedure 
@@ -60,6 +131,111 @@ mlebigvec <- function(maty, matz, h, n, bigt) {
     .Call(`_multiMNbreaks_mlebigvec`, maty, matz, h, n, bigt)
 }
 
+#' @title MLE function
+#' 
+#' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+#' @export
+mlebigvec_forpar <- function(maty, matz, h, n, bigt, start, end) {
+    .Call(`_multiMNbreaks_mlebigvec_forpar`, maty, matz, h, n, bigt, start, end)
+}
+
+#' @title MLE function
+#' 
+#' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+#' @export
+mlebigvec_forpar2 <- function(maty, matz, h, n, bigt, start, end) {
+    .Call(`_multiMNbreaks_mlebigvec_forpar2`, maty, matz, h, n, bigt, start, end)
+}
+
+#' @title Compute global break dates using log-likelihood 
+#' 
+#' @description This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m. 
+#' 
+#' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+#' 
+#' @export
+dating_mle <- function(y, z, n, h, m, bigt, workers) {
+    .Call(`_multiMNbreaks_dating_mle`, y, z, n, h, m, bigt, workers)
+}
+
+#' @title Dating global break dates using log-likelihood 
+#' 
+#' @description This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m. 
+#' 
+#' @param bigresvec segmented residual matrix
+#' @param h    minimum number of observations in each segment
+#' @param m    number of breaks.
+#' @param n number of equations.
+#' @param bigt number of observations in the sample
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'   \item{\code{global}: }{The maximized likelhood function under optimal partitons.}
+#'   \item{\code{datevec}: }{the estimated break dates.}
+#' }
+#' 
+#' @references Qu Perron (2007)
+#' 
+#' @export
+dating_m2 <- function(bigvec2, h, m, n, bigt) {
+    .Call(`_multiMNbreaks_dating_m2`, bigvec2, h, m, n, bigt)
+}
+
+#' @title Model estimation (Unrestricted)
+#' 
+#' @description procedure that estimates the coefficients under the optimal partitions. 
+#' 
+#' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+#' 
+#' @param maty dependent variable.
+#' @param matz independent variable.
+#' @param n number of equations.
+#' @param m number of breaks.
+#' @param br break dates.
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'   \item{\code{beta}: }{the estimate of coefficients}
+#'   \item{\code{vv}: }{}
+#' }
+#' 
+#' @export
+estim <- function(maty, matz, n, m, br) {
+    .Call(`_multiMNbreaks_estim`, maty, matz, n, m, br)
+}
+
+#' @title Model estimation (with restriction)
+#' 
+#' @description Procedure that estimates the model allowing cross regime restrictions.
+#' 
+#' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+#' 
+#' @note For the current version of the code, only linear restriction is allowed. 
+#' The model includes partial structural change and block-partial structural change models.
+#' The estimation of based on iterative feasible GLS
+#' 
+#' @param maty: dependent variable.
+#' @param matz: independent variable.
+#' @param n: number of equations.
+#' @param m: number of breaks.
+#' @param bigt: sample size.
+#' @param br: break dates.
+#' @param R: the restriction, taking the form beta=R*teta, where teta is the vector.
+#' @param of basic parameters of the restricted model.
+#' @param brv: brv=1 if the variance-covariance matrix is allowed to change brv=0 otherwise.
+#' @param brbeta: brbeta=1 if the coefficients are allowed to change brbeta=0 otherwise.
+#' 
+#' @return List of class \code{} (\code{S3} object) with attributes including:
+#' \itemize{
+#'   \item{\code{nbeta}: }{the estimate of coefficients imposing restrictions}
+#'   \item{\code{nvv}: }{}
+#' }
+#' 
+#' @export
+r_estim <- function(maty, matz, bigt, n, m, br, R, brbeta, brv, maxit = 1000L) {
+    .Call(`_multiMNbreaks_r_estim`, maty, matz, bigt, n, m, br, R, brbeta, brv, maxit)
+}
+
 #' @title Standard normal errors using box Muller 
 #' 
 #' @description This function generates uncorrelated standard normal processes using box Muller method.
@@ -95,5 +271,61 @@ randSN <- function(n, q) {
 #' @export
 simuNorm <- function(mdl_h0, burnin = 0L) {
     .Call(`_multiMNbreaks_simuNorm`, mdl_h0, burnin)
+}
+
+#' @title critical values
+#' 
+#' @export
+critval <- function(k, q, trm, n, B) {
+    .Call(`_multiMNbreaks_critval`, k, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+critval2 <- function(k, q, trm, n, B) {
+    .Call(`_multiMNbreaks_critval2`, k, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+critval3 <- function(m, q, trm, n, B) {
+    .Call(`_multiMNbreaks_critval3`, m, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+critval4 <- function(m, q, trm, n, B) {
+    .Call(`_multiMNbreaks_critval4`, m, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+seqC <- function(from, to, by) {
+    .Call(`_multiMNbreaks_seqC`, from, to, by)
+}
+
+#' @title critical values
+#' 
+#' @export
+bp_supF_critval <- function(m, q, trm, n, B) {
+    .Call(`_multiMNbreaks_bp_supF_critval`, m, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+bp_supSeq_critval <- function(l, q, trm, n, B) {
+    .Call(`_multiMNbreaks_bp_supSeq_critval`, l, q, trm, n, B)
+}
+
+#' @title critical values
+#' 
+#' @export
+bp_UDmax_critval <- function(M, q, trm, n, B) {
+    .Call(`_multiMNbreaks_bp_UDmax_critval`, M, q, trm, n, B)
 }
 

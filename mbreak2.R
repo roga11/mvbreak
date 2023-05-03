@@ -28,7 +28,7 @@ m <- 2
 
 # If you have restrictions, specify the matrix R (here only the constants (first
 # regressor) is allowed to change in each equation). 
-# if you do not have restrictions, set R=eye(cols(_S)*(m+1))@
+# if you do not have restrictions, set R=diag(ncol(S)*(m+1))@
 # NOTE: This R is for when m=2
 R <- rbind(c(1,0,0,0,0,0,0,0),
            c(0,1,0,0,0,0,0,0),

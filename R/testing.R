@@ -312,7 +312,9 @@ suprft <- function(maty,matx,m,n,br,rbeta,R,bigt,brbeta,brv,prewhit){
 #' @references Qu & Perron (2007) Econometrica
 #' 
 #' @export
-seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm){
+seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm, R_ls=NULL){
+  # remove h as input - only trm is needed but specify h as func. of trm and bigt
+  # can obtain nseg from dt - consider removing as input and creating in func.
   ssr <- matrix(0,nseg,1)
   lrtest <- matrix(0,nseg,1)
   dv <- matrix(0,nseg+1,1)
@@ -328,16 +330,21 @@ seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm){
       endi <- dv[is+1,1]
       segy <- as.matrix(maty[(n*(starti-1)+1):(n*endi),])
       segz <- as.matrix(matz[(n*(starti-1)+1):(n*endi),])
+      if(is.null(R_ls)){
+        R_tmp <- diag(ncol(matz)*2)
+      }else{
+        R_tmp <- R_ls[[is]]
+      }
       if (brbeta==1 & brv==0){
-        estout <- est(segy,segz,n,1,endi-starti+1,trm,diag(ncol(matz)*2),1,0)
+        estout <- est(segy,segz,n,1,endi-starti+1,trm,R_tmp,1,0,h)
         lrtest[is,1] <- suplr(segy,segz,1,n,estout$dx,estout$rbeta,endi-starti+1,1,0)
       }
       if (brbeta==0 & brv==1){
-        estout <- est(segy,segz,n,1,endi-starti+1,trm,kronecker(matrix(1,2,1),diag(ncol(matz))),0,1)
+        estout <- est(segy,segz,n,1,endi-starti+1,trm,kronecker(matrix(1,2,1),diag(ncol(matz))),0,1,h)
         lrtest[is,1] <- suplr(segy,segz,1,n,estout$dx,estout$rbeta,endi-starti+1,0,1)
       }
       if (brbeta==1 & brv==1){
-        estout <- est(segy,segz,n,1,endi-starti+1,trm,diag(ncol(matz)*2),1,1)
+        estout <- est(segy,segz,n,1,endi-starti+1,trm,R_tmp,1,1,h)
         lrtest[is,1] <- suplr(segy,segz,1,n,estout$dx,estout$rbeta,endi-starti+1,1,1)
       }
     }else{
@@ -347,8 +354,8 @@ seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm){
     is <- is + 1
   }
   if (ni == nseg){
-    warning(paste0('Given the location of the breaks from the global optimizationwith ',
-                   nseg-1, 'breaks there was no more place to insert an additional breaks that satisfy the minimal length requirement.'))
+    warning(paste0('Given the location of the breaks from the global optimization with ',
+                   nseg-1, ' breaks there was no more place to insert an additional breaks that satisfy the minimal length requirement.'))
   }
   maxf <- max(lrtest[1:nseg,1])
   return(maxf)
