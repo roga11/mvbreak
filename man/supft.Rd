@@ -2,19 +2,43 @@
 % Please edit documentation in R/testing.R
 \name{supft}
 \alias{supft}
-\title{supF}
+\title{Sup-F test against a fixed number of breaks, robust to serial correlation}
 \usage{
 supft(maty, matx, m, n, br, rbeta, bigt, brbeta, brv, prewhit)
 }
-\description{
-Test allowing m breaks.
+\arguments{
+\item{maty}{dependent variables stacked by observation: element
+\code{(t-1)*n + i} is observation \code{t} of equation \code{i} (from \code{transf()}).}
+
+\item{matx}{regressors stacked the same way, one column per coefficient (from \code{transf()}).}
+
+\item{m}{number of breaks.}
+
+\item{n}{number of equations.}
+
+\item{br}{the estimated break dates, as an \code{m} by 1 matrix (from \code{est()}).}
+
+\item{rbeta}{the stacked regime coefficients under the alternative (from \code{est()}).}
+
+\item{bigt}{number of observations.}
+
+\item{brbeta}{1 if the regression coefficients change under the alternative, 0 otherwise.}
+
+\item{brv}{1 if the covariance matrix changes under the alternative, 0 otherwise.}
+
+\item{prewhit}{1 to prewhiten the scores with a VAR(1) in the HAC estimate, 0 otherwise.}
 }
-\note{
-This version of the test DOES allow for serial correlation of the errors but does not 
-allow for changes in the variance.
+\value{
+The value of the statistic. Compare with \code{critical_values()}.
+}
+\description{
+Wald-type statistic for changes in the regression coefficients
+at the estimated break dates, with a HAC covariance matrix from
+\code{correct()}, so that serially correlated errors are allowed. The
+covariance matrix of the errors is held fixed across regimes.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+Bai, J. and P. Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes", \emph{Econometrica}, 66, 47-78.
 
-Qu & Perron (2007) Econometrica
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

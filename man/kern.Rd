@@ -2,20 +2,21 @@
 % Please edit documentation in R/testing.R
 \name{kern}
 \alias{kern}
-\title{Compute quadratic kernel}
+\title{Quadratic spectral kernel}
 \usage{
 kern(x)
 }
-\description{
-Compute quadratic kernel
+\arguments{
+\item{x}{argument of the kernel (lag divided by bandwidth).}
 }
-\details{
-Note: This code is an adaptation of the one originally written by Yohei 
-Yamamoto and Pierre Perron for MATLAB. Original codes can be found on 
-Pierre Perron's website: https://blogs.bu.edu/perron/codes/
+\value{
+Kernel weight.
+}
+\description{
+The quadratic spectral kernel of Andrews (1991), used by
+\code{jhatpr()} to weight autocovariances.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 }
+\keyword{internal}

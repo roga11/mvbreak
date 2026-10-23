@@ -2,19 +2,17 @@
 % Please edit documentation in R/RcppExports.R
 \name{vecr}
 \alias{vecr}
-\title{convert mat to vec of transpose}
+\title{Vectorise a matrix row by row}
 \usage{
 vecr(x)
 }
 \arguments{
-\item{\code{x}}{}
+\item{x}{matrix.}
 }
 \value{
-vectorised mat
+Numeric vector.
 }
 \description{
-This procedure
+Stacks the rows of a matrix into a vector (GAUSS \code{vecr}).
 }
-\references{
-Qu & Perron (2007)
-}
+\keyword{internal}

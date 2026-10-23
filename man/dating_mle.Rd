@@ -2,13 +2,32 @@
 % Please edit documentation in R/RcppExports.R
 \name{dating_mle}
 \alias{dating_mle}
-\title{Compute global break dates using log-likelihood}
+\title{Global break dates by quasi-maximum likelihood}
 \usage{
-dating_mle(y, z, n, h, m, bigt, workers)
+dating_mle(y, z, n, h, m, bigt)
+}
+\arguments{
+\item{y}{dependent variables stacked by observation (\code{maty} from \code{transf()}).}
+
+\item{z}{regressors stacked the same way (\code{matz} from \code{transf()}).}
+
+\item{n}{number of equations.}
+
+\item{h}{minimum length of a regime.}
+
+\item{m}{largest number of breaks considered.}
+
+\item{bigt}{number of observations.}
+}
+\value{
+See \code{dating_dp()}.
 }
 \description{
-This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m.
+Computes the likelihood of every admissible segment with
+\code{mlebigvec()} and runs the dynamic programme \code{dating_dp()}.
+Section 4.1 of Qu and Perron (2007). To compute the segment likelihoods in
+parallel, call \code{mlebigvec_par()} and \code{dating_dp()} directly.
 }
 \references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

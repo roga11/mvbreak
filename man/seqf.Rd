@@ -2,16 +2,38 @@
 % Please edit documentation in R/testing.R
 \name{seqf}
 \alias{seqf}
-\title{sequential f test}
+\title{Sequential sup-F test, Seq(l+1 | l), robust to serial correlation}
 \usage{
 seqf(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, prewhit, trm)
 }
-\description{
-procedure that computes the supF(l+1|l) test l=nseg-1. The l breaks
- under the null are taken from the global minimization (in dt).
-}
-\references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+\arguments{
+\item{maty}{dependent variables stacked by observation (\code{maty} from \code{transf()}).}
 
-Qu & Perron (2007) Econometrica
+\item{matz}{regressors stacked by observation (\code{matz} from \code{transf()}).}
+
+\item{n}{number of equations.}
+
+\item{dt}{the \code{l} break dates under the null, from the global search.}
+
+\item{nseg}{number of segments, \code{l + 1}.}
+
+\item{bigt}{number of observations.}
+
+\item{h}{minimum segment length used in the global search.}
+
+\item{brbeta}{1 if the regression coefficients may change, 0 otherwise.}
+
+\item{brv}{1 if the covariance matrix of the errors may change, 0 otherwise.}
+
+\item{prewhit}{1 to prewhiten the scores with a VAR(1) before the HAC estimate, 0 otherwise.}
+
+\item{trm}{trimming, as a fraction of the sample. Ignored when \code{h} is given.}
+}
+\value{
+The value of the test.
+}
+\description{
+As \code{seqlr()}, with the HAC-based sup-F test of
+\code{supft()} in each segment. Only changes in the coefficients are
+considered.
 }

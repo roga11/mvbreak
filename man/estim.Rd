@@ -2,31 +2,31 @@
 % Please edit documentation in R/RcppExports.R
 \name{estim}
 \alias{estim}
-\title{Model estimation (Unrestricted)}
+\title{Unrestricted estimates given the break dates}
 \usage{
 estim(maty, matz, n, m, br)
 }
 \arguments{
-\item{maty}{dependent variable.}
+\item{maty}{dependent variables stacked by observation.}
 
-\item{matz}{independent variable.}
+\item{matz}{regressors stacked by observation.}
 
 \item{n}{number of equations.}
 
 \item{m}{number of breaks.}
 
-\item{br}{break dates.}
+\item{br}{the \code{m} break dates.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{beta}: }{the estimate of coefficients}
-  \item{\code{vv}: }{}
-}
+List with \code{beta} (\code{m + 1} by \code{p} matrix, one row per
+regime) and \code{vv} (the \code{m + 1} covariance matrices stacked, \code{(m + 1) n} by \code{n}).
 }
 \description{
-procedure that estimates the coefficients under the optimal partitions.
+Estimates the coefficients and the error covariance matrix of
+each regime separately by iterated feasible GLS (equation 16 of Qu and
+Perron 2007 and the iteration below it).
 }
-\details{
-See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+\references{
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }
+\keyword{internal}

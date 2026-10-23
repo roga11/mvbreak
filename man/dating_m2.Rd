@@ -2,31 +2,32 @@
 % Please edit documentation in R/RcppExports.R
 \name{dating_m2}
 \alias{dating_m2}
-\title{Dating global break dates using log-likelihood}
+\title{Dynamic programming under given regime coefficients}
 \usage{
 dating_m2(bigvec2, h, m, n, bigt)
 }
 \arguments{
-\item{h}{minimum number of observations in each segment}
+\item{bigvec2}{residuals from \code{residseg()}, \code{T * (m + 1)} by \code{n}.}
+
+\item{h}{minimum length of a regime.}
 
 \item{m}{number of breaks.}
 
 \item{n}{number of equations.}
 
-\item{bigt}{number of observations in the sample}
-
-\item{bigresvec}{segmented residual matrix}
+\item{bigt}{number of observations.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{global}: }{The maximized likelhood function under optimal partitons.}
-  \item{\code{datevec}: }{the estimated break dates.}
-}
+List with \code{glob} (maximised log-likelihood for 1 to \code{m}
+breaks) and \code{datevec} (break dates, column \code{j} for \code{j} breaks).
 }
 \description{
-This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m.
+The re-partitioning step of the restricted estimation
+(Section 4.2 of Qu and Perron 2007, step 3): given the residuals of every
+regime's coefficients over the whole sample, finds the partition that
+maximises the likelihood for 1 to \code{m} breaks.
 }
 \references{
-Qu Perron (2007)
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }
+\keyword{internal}

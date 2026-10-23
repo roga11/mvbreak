@@ -2,19 +2,21 @@
 % Please edit documentation in R/RcppExports.R
 \name{randSN}
 \alias{randSN}
-\title{Standard normal errors using box Muller}
+\title{Standard normal draws}
 \usage{
 randSN(n, q)
 }
 \arguments{
-\item{\code{n}}{Integer determining the length of the process to be simulated}
+\item{n}{number of rows.}
 
-\item{\code{q}}{Integer determining the number of processes to be simulated}
+\item{q}{number of columns.}
 }
 \value{
-A (\code{T x q}) matrix of standard normal distributed errors
+\code{n} by \code{q} matrix.
 }
 \description{
-This function generates uncorrelated standard normal processes using box Muller method.
+An \code{n} by \code{q} matrix of independent standard normal
+draws by the Box-Muller transform, from R's uniform random number generator,
+so that \code{set.seed()} makes the result reproducible.
 }
 \keyword{internal}

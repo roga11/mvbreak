@@ -2,15 +2,26 @@
 % Please edit documentation in R/testing.R
 \name{correct}
 \alias{correct}
-\title{HAC procedure that obtains the robust standard errors}
+\title{HAC long-run covariance, with optional prewhitening}
 \usage{
 correct(res, prewhit)
 }
+\arguments{
+\item{res}{matrix, one series per column.}
+
+\item{prewhit}{1 to prewhiten with a VAR(1), 0 otherwise.}
+}
+\value{
+Square matrix of the same dimension as \code{ncol(res)}.
+}
 \description{
-main procedures which activates the computation of robust standard errors.
+Long-run covariance matrix of \code{res} by \code{jhatpr()},
+optionally after prewhitening with a VAR(1) and recolouring (Andrews and
+Monahan 1992). Used by the sup-F tests and the confidence intervals when
+the errors may be serially correlated.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 
-Qu & Perron (2007) Econometrica
+Andrews, D. W. K. and J. C. Monahan (1992), "An Improved Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimator", \emph{Econometrica}, 60, 953-966.
 }

@@ -2,20 +2,22 @@
 % Please edit documentation in R/testing.R
 \name{bandw}
 \alias{bandw}
-\title{bandwidth based on AR(1) approximation}
+\title{Automatic bandwidth for the long-run covariance}
 \usage{
 bandw(vhat)
 }
-\description{
-bandwidth based on AR(1) approximation
+\arguments{
+\item{vhat}{matrix whose long-run covariance is being estimated, one series per column.}
 }
-\details{
-Note: This code is an adaptation of the one originally written by Yohei 
-Yamamoto and Pierre Perron for MATLAB. Original codes can be found on 
-Pierre Perron's website: https://blogs.bu.edu/perron/codes/
+\value{
+Bandwidth.
+}
+\description{
+Andrews' (1991) automatic bandwidth for the quadratic spectral
+kernel, from an AR(1) approximation to each column of \code{vhat} with equal
+weights.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 }
+\keyword{internal}

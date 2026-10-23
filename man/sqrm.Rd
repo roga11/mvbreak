@@ -2,13 +2,17 @@
 % Please edit documentation in R/testing.R
 \name{sqrm}
 \alias{sqrm}
-\title{Square root of PD matrix}
+\title{Symmetric square root of a positive definite matrix}
 \usage{
 sqrm(M)
 }
 \arguments{
-\item{M}{matrix}
+\item{M}{symmetric positive definite matrix.}
+}
+\value{
+Symmetric matrix \code{A} with \code{A \%*\% A = M}.
 }
 \description{
-compute the square root matrix of a symmetric positive definte matrix
+Computes \code{M^(1/2)} from the eigendecomposition of \code{M}.
 }
+\keyword{internal}

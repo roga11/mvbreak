@@ -2,16 +2,44 @@
 % Please edit documentation in R/testing.R
 \name{seqlr}
 \alias{seqlr}
-\title{sequential likelihood ratio}
+\title{Sequential sup-LR test, Seq(l+1 | l)}
 \usage{
 seqlr(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, trm, R_ls = NULL)
 }
+\arguments{
+\item{maty}{dependent variables stacked by observation (\code{maty} from \code{transf()}).}
+
+\item{matz}{regressors stacked by observation (\code{matz} from \code{transf()}).}
+
+\item{n}{number of equations.}
+
+\item{dt}{the \code{l} break dates under the null, from the global search.}
+
+\item{nseg}{number of segments, \code{l + 1}.}
+
+\item{bigt}{number of observations.}
+
+\item{h}{minimum segment length used in the global search.}
+
+\item{brbeta}{1 if the regression coefficients may change, 0 otherwise.}
+
+\item{brv}{1 if the covariance matrix of the errors may change, 0 otherwise.}
+
+\item{trm}{trimming, as a fraction of the sample. Ignored when \code{h} is given.}
+
+\item{R_ls}{optional list of restriction matrices, one per segment.}
+}
+\value{
+The value of the test.
+}
 \description{
-procedure that computes the supF(l+1|l) test l=nseg-1. The l breaks
- under the null are taken from the global minimization (in dt).
+For each of the \code{l+1} segments defined by the \code{l}
+break dates in \code{dt}, computes the sup-LR test for one additional break,
+and returns the largest value (Section 6.3 of Qu and Perron 2007). Within a
+segment the minimum regime length is \code{round(trm * length)}, raised to
+the floor of \code{regime_floor()} when that is larger; segments too short
+to hold an additional break are skipped.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Qu & Perron (2007) Econometrica
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

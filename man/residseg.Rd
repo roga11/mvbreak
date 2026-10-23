@@ -2,29 +2,34 @@
 % Please edit documentation in R/estimfuncs.R
 \name{residseg}
 \alias{residseg}
-\title{Dating global break dates using log-likelihood}
+\title{Residuals of every regime's coefficients over the whole sample}
 \usage{
 residseg(maty, matz, nbeta, q, n, m)
 }
 \arguments{
-\item{q}{total number of regression coefficients in each regime.}
+\item{maty}{dependent variables stacked by observation: element
+\code{(t-1)*n + i} is observation \code{t} of equation \code{i} (from \code{transf()}).}
 
-\item{n}{number of equations}
+\item{matz}{regressors stacked the same way, one column per coefficient (from \code{transf()}).}
 
-\item{m}{number of breaks}
+\item{nbeta}{stacked regime coefficients, \code{(m + 1) * q} by 1.}
 
-\item{y}{dependent variable.}
+\item{q}{number of coefficients per regime.}
 
-\item{z}{regressors}
+\item{n}{number of equations.}
 
-\item{b}{estimated coefficients.}
+\item{m}{number of breaks.}
 }
 \value{
-\code{bigresvec}: A (\code{T*(m+1) x n}) matrix with residuals for all the possible segments
+Matrix with \code{T * (m + 1)} rows and \code{n} columns; rows
+\code{(j-1)*T + 1} to \code{j*T} hold the residuals under regime \code{j}.
 }
 \description{
-Find the optimal partition allowing m breaks (unrestricted model)
+For each regime \code{j}, computes the residuals of the whole
+sample under the coefficients of regime \code{j}. The result is the input
+of \code{dating_m2()}, the re-partitioning step of the restricted
+estimation (Section 4.2 of Qu and Perron 2007).
 }
 \references{
-Qu Perron (2007)
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

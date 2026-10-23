@@ -2,22 +2,23 @@
 % Please edit documentation in R/RcppExports.R
 \name{transf_cpp}
 \alias{transf_cpp}
-\title{Transform variables}
+\title{Stack a system of equations (C++ core of transf)}
 \usage{
 transf_cpp(y, z, S, S_NULL)
 }
 \arguments{
-\item{y}{dependent variable as a matrix, with the jth row containing observations at time j}
+\item{y}{\code{T} by \code{n} matrix of dependent variables.}
 
-\item{z}{regressors as a matrix, with the jth row containing}
+\item{z}{\code{T} by \code{q} matrix of regressors.}
+
+\item{S}{selection matrix; ignored when \code{S_NULL} is 1.}
+
+\item{S_NULL}{1 to use every regressor in every equation, 0 to apply \code{S}.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
- \item{\code{maty}: }{dependent variable as a row vector, with the (i-1)*n+jth row containing ith observation for equation j.}
- \item{\code{matz}: }{regressors as a matrix}
-}
+List with \code{maty} and \code{matz}.
 }
 \description{
-Procedure that generates the matrix of regressors (matz) and that of the dependent variable (maty)
+See \code{transf()}, which calls this.
 }
+\keyword{internal}

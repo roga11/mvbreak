@@ -2,13 +2,30 @@
 % Please edit documentation in R/estimfuncs.R
 \name{mlebigvec_par}
 \alias{mlebigvec_par}
-\title{MLE function}
+\title{Segment likelihoods computed in parallel}
 \usage{
-mlebigvec_par(maty, matz, h, n, bigt, workers)
+mlebigvec_par(maty, matz, h, n, bigt, workers = 1)
+}
+\arguments{
+\item{maty}{dependent variables stacked by observation.}
+
+\item{matz}{regressors stacked by observation.}
+
+\item{h}{minimum length of a regime.}
+
+\item{n}{number of equations.}
+
+\item{bigt}{number of observations.}
+
+\item{workers}{number of workers; 1 computes sequentially.}
+}
+\value{
+Numeric vector of length \code{bigt * (bigt + 1) / 2}.
 }
 \description{
-MLE function
-}
-\references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+Same output as \code{mlebigvec()}: minus the log-likelihood of
+every admissible segment, stored in the triangular layout used by
+\code{dating_dp()}. The starting dates are split into contiguous blocks, one
+per worker, and computed on a socket cluster that is created and stopped
+inside the function.
 }

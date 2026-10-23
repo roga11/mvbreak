@@ -2,32 +2,28 @@
 % Please edit documentation in R/RcppExports.R
 \name{parti}
 \alias{parti}
-\title{optimal break partitions for a given segment}
+\title{Best single break within a segment}
 \usage{
 parti(start, b1, b2, last, bigvec, bigt)
 }
 \arguments{
-\item{start}{beginning of the segment considered}
+\item{start}{first observation of the segment.}
 
-\item{b1}{first possible break date}
+\item{b1, b2}{first and last admissible break dates.}
 
-\item{b2}{last possible break date}
+\item{last}{last observation of the segment.}
 
-\item{last}{end of segment considered}
+\item{bigvec}{segment likelihoods from \code{mlebigvec()}.}
 
-\item{bigvec}{vector of upper-triangular}
+\item{bigt}{number of observations.}
+}
+\value{
+List with \code{loglikmin} (minus the maximised log-likelihood) and
+\code{bdate} (the break date).
 }
 \description{
-procedure to obtain an optimal one break partitions for a segment that 
-starts at date start and ends at date last. It return the optimal break
-and the associated minus likelihood value (MML).
+Finds the break date in \code{[b1, b2]} that maximises the
+likelihood of the segment \code{[start, last]} split in two, using the
+segment likelihoods stored in \code{bigvec}.
 }
-\references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
-
-Qu Perron (2007) Econometrica
-
-PYZ (2020) QE
-}
+\keyword{internal}

@@ -2,20 +2,22 @@
 % Please edit documentation in R/testing.R
 \name{jhatpr}
 \alias{jhatpr}
-\title{compute long run variance}
+\title{Long-run covariance matrix}
 \usage{
 jhatpr(vmat)
 }
-\description{
-compute long run variance
+\arguments{
+\item{vmat}{\code{nt} by \code{d} matrix, one series per column.}
 }
-\details{
-Note: This code is an adaptation of the one originally written by Yohei 
-Yamamoto and Pierre Perron for MATLAB. Original codes can be found on 
-Pierre Perron's website: https://blogs.bu.edu/perron/codes/
+\value{
+\code{d} by \code{d} matrix.
+}
+\description{
+Kernel estimate of the long-run covariance matrix of the rows
+of \code{vmat}, with the quadratic spectral kernel and the automatic
+bandwidth of \code{bandw()}, scaled by \code{1 / (nt - d)}.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 }
+\keyword{internal}

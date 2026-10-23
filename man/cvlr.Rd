@@ -2,17 +2,26 @@
 % Please edit documentation in R/testing.R
 \name{cvlr}
 \alias{cvlr}
-\title{Critical values for suplr test}
+\title{Response-surface critical values of the sup-LR test}
 \usage{
 cvlr(k, q, trm)
 }
+\arguments{
+\item{k}{number of breaks.}
+
+\item{q}{number of parameters that change at each break.}
+
+\item{trm}{trimming, as a fraction of the sample.}
+}
+\value{
+Vector of critical values at the 90, 95, 97.5 and 99 percent levels.
+}
 \description{
-Critical values
+Critical values of the sup-LR (sup-F) test against \code{k}
+breaks from the response-surface regressions of Bai and Perron (2003),
+valid for 1 to 10 changing parameters, on the scale of the sup-LR statistic
+of this package. For other cases use \code{critical_values()}.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Qu & Perron (2007) Econometrica
-
-Bai, J. and Perron, P. (2003), Critical values for multiple structural change tests. \emph{The Econometrics Journal}, 6: 72-78. https://doi.org/10.1111/1368-423X.00102
+Bai, J. and P. Perron (2003), "Critical Values for Multiple Structural Change Tests", \emph{Econometrics Journal}, 6, 72-78.
 }

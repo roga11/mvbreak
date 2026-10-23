@@ -2,10 +2,19 @@
 % Please edit documentation in R/RcppExports.R
 \name{seqC}
 \alias{seqC}
-\title{critical values}
+\title{Integer sequence}
 \usage{
 seqC(from, to, by)
 }
-\description{
-critical values
+\arguments{
+\item{from, to}{first and last value.}
+
+\item{by}{unused; kept for the GAUSS signature.}
 }
+\value{
+Numeric vector.
+}
+\description{
+The sequence \code{from, from + 1, ..., to} (GAUSS \code{seqa}).
+}
+\keyword{internal}

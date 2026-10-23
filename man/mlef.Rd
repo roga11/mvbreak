@@ -2,32 +2,40 @@
 % Please edit documentation in R/RcppExports.R
 \name{mlef}
 \alias{mlef}
-\title{Computing MLE based on a recursive formula}
+\title{Likelihoods of all segments starting at one date}
 \usage{
 mlef(start, maty, matz, h, n, last, maxit = 1000L)
 }
 \arguments{
-\item{\code{start}}{starting entry of the sample used.}
+\item{start}{first observation of the segments.}
 
-\item{\code{last}}{ending date of the last segment considered.}
+\item{maty}{dependent variables stacked by observation.}
 
-\item{\code{maty}}{vector of dependent variables, with the n*(j-1)+i th element corresponding to the jth observation from ith equation.}
+\item{matz}{regressors stacked by observation.}
 
-\item{\code{matz}}{matrix of all regressors included in the regression, arranged in the same way as maty.}
+\item{h}{minimum length of a segment.}
 
-\item{\code{h}}{minimal length of a segment.}
+\item{n}{number of equations.}
 
-\item{\code{n}}{number of equations included in the system.}
+\item{last}{last observation considered.}
+
+\item{maxit}{largest number of feasible GLS iterations.}
 }
 \value{
-It returns a vector of MLE of length last-start+1 (stored for convenience in a vector of length T).
+Vector of length \code{last}; entries before \code{start + h - 1} are zero.
 }
 \description{
-This procedure computes MLE from a data set that starts at date 'start' and ends at date 'last'.
-}
-\details{
-Note that that the first h-1 elements have no meaning, usually is initialized as zero.
+Minus the Gaussian quasi-log-likelihood of the segments
+\code{[start, last]} for every \code{last} from \code{start + h - 1} to
+the end of the sample, computed with the recursive updating of Section 4.1
+of Qu and Perron (2007): iterated feasible GLS on the first \code{h}
+observations, then one observation at a time with the updating formulas
+of Tobing and McGilchrist (1992). The values are approximations to the
+exact maximised likelihoods and depend on \code{h}.
 }
 \references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+
+Tobing, H. and C. A. McGilchrist (1992), "Recursive Residuals for Multivariate Regression Models", \emph{Australian Journal of Statistics}, 34, 217-232.
 }
+\keyword{internal}

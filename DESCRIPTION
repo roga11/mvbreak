@@ -1,8 +1,8 @@
 Package: multiMNbreaks
 Type: Package
-Title: multiMNbreaks
+Title: Structural Changes in Multivariate Regressions
 Version: 0.0.1.9000
-Date: 2023-02-28
+Date: 2026-10-22
 Authors@R:
   c(person(given = "Pierre", 
            family = "Perron", 
@@ -11,25 +11,31 @@ Authors@R:
     person(given = "Gabriel", 
            family = "Rodriguez-Rondon", 
            role = c("cre","aut"), 
-           email = "gabriel.rodriguezrondon@mail.mcgill.ca"),
+           email = "gabrodriguezrondon@gmail.com"),
     person(given = "Zhongjun", 
            family = "Qu", 
            role = c("aut"),
            email = ""))
-Maintainer: Gabriel Rodriguez Rondon <gabriel.rodriguezrondon@mail.mcgill.ca>
-Description: This package allows the user to estimate a multivariate model wtih multiple structural breaks and test for the number of (common) breaks.
-License: GPL (>= 2)
+Maintainer: Gabriel Rodriguez-Rondon <gabrodriguezrondon@gmail.com>
+Description: Estimation, testing and inference for multiple structural changes at unknown
+    dates in a system of equations, following Qu and Perron (2007) <doi:10.1111/j.1468-0262.2006.00754.x>.
+    Changes may occur in the regression coefficients, in the covariance matrix of the errors, or
+    in both, with linear restrictions within and across regimes. Provides quasi-maximum-likelihood
+    estimates of the break dates and coefficients, sup-LR, WDmax and sequential tests for the
+    number of breaks, and simulated critical values for any number of changing parameters.
+License: GPL (>= 3)
 Encoding: UTF-8
+SystemRequirements: C++17
 Imports: 
   stats,
-  rlang,
   pracma,
-  Rcpp (>= 1.0.8), 
-  RcppArmadillo
+  parallel,
+  utils,
+  Rcpp (>= 1.0.8)
 LinkingTo: 
   Rcpp, 
   RcppArmadillo
 Depends: 
     R (>= 2.10)
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.3

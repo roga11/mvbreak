@@ -2,23 +2,48 @@
 % Please edit documentation in R/testing.R
 \name{suplr}
 \alias{suplr}
-\title{sup LRT from Qu & Perron (2007)}
+\title{Sup-LR test against a fixed number of breaks}
 \usage{
 suplr(maty, matx, m, n, br, rbeta, bigt, brbeta, brv)
 }
-\description{
-Procedure that constructs the supf test against m breaks. 
-The test is the LR test under the optimal partitions computed by dating_MLE. 
-Control variables: 
-    if brv==1, against breaks in variance
-    if brbeta==1, against breaks in coefficients
-    if brv==1 and brbeta==1, allowing changes in both.
+\arguments{
+\item{maty}{dependent variables stacked by observation: element
+\code{(t-1)*n + i} is observation \code{t} of equation \code{i} (from \code{transf()}).}
+
+\item{matx}{regressors stacked the same way, one column per coefficient (from \code{transf()}).}
+
+\item{m}{number of breaks.}
+
+\item{n}{number of equations.}
+
+\item{br}{the estimated break dates, as an \code{m} by 1 matrix (from \code{est()}).}
+
+\item{rbeta}{the stacked regime coefficients under the alternative (from \code{est()}).}
+
+\item{bigt}{number of observations.}
+
+\item{brbeta}{1 if the regression coefficients change under the alternative, 0 otherwise.}
+
+\item{brv}{1 if the covariance matrix changes under the alternative, 0 otherwise.}
 }
-\note{
-This version of the test does NOT allow for serial correlation of the errors.
+\value{
+The value of the statistic. Compare with \code{critical_values()}.
+}
+\description{
+The likelihood-ratio statistic of Qu and Perron (2007),
+\code{2 (lr_m - lr_0)}, comparing the model with \code{m} breaks at the
+estimated dates with the model without breaks, whose coefficients and
+covariance are estimated by iterated feasible GLS. Serial correlation in the
+errors is not allowed for; see \code{supft()} for that case.
+}
+\examples{
+y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
+S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
+d <- transf(y, z, S)
+fit <- est(d$maty, d$matz, n = 2, m = 1, bigt = 150, trm = 0.2, brbeta = 1, brv = 0)
+suplr(d$maty, d$matz, 1, 2, fit$dx, fit$rbeta, 150, brbeta = 1, brv = 0)
+
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Qu & Perron (2007) Econometrica
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

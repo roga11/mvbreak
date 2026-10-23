@@ -2,13 +2,17 @@
 % Please edit documentation in R/estimfuncs.R
 \name{vec}
 \alias{vec}
-\title{Vectorize}
+\title{Vectorise a matrix}
 \usage{
 vec(a)
 }
+\arguments{
+\item{a}{matrix.}
+}
+\value{
+Numeric vector.
+}
 \description{
-procedure to jointly estimates the coefficient and variance break dates following section 5.1 of Qu and Perron (2007). The code follows est.m of Qu and Perron (2007)
+Stacks the columns of a matrix into a vector (GAUSS \code{vec}).
 }
-\references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
-}
+\keyword{internal}

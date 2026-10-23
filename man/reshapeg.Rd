@@ -2,23 +2,21 @@
 % Please edit documentation in R/RcppExports.R
 \name{reshapeg}
 \alias{reshapeg}
-\title{Reshape mat}
+\title{Reshape a matrix row by row}
 \usage{
 reshapeg(amat, a, b)
 }
 \arguments{
-\item{\code{amat}}{}
+\item{amat}{matrix whose elements are used.}
 
-\item{\code{a}}{}
-
-\item{\code{b}}{}
+\item{a, b}{dimensions of the result.}
 }
 \value{
-reshaped matrix
+\code{a} by \code{b} matrix.
 }
 \description{
-This procedure
+Fills an \code{a} by \code{b} matrix row by row with the
+elements of \code{amat} taken row by row (GAUSS \code{reshape}). Used to
+turn stacked residuals into a \code{T} by \code{n} matrix.
 }
-\references{
-Qu & Perron (2007)
-}
+\keyword{internal}

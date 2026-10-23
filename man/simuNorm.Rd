@@ -2,25 +2,23 @@
 % Please edit documentation in R/RcppExports.R
 \name{simuNorm}
 \alias{simuNorm}
-\title{Simulate normally distributed process}
+\title{Simulate a multivariate normal series}
 \usage{
 simuNorm(mdl_h0, burnin = 0L)
 }
 \arguments{
-\item{mdl_h0}{List containing the following DGP parameters
-\itemize{
-  \item{\code{n}: }{Length of series.}
-  \item{\code{mu}: }{A (\code{q x 1}) vector of means.}
-  \item{\code{sigma}: }{A (\code{q x q}) covariance matrix.}
-  \item{\code{q}: }{Number of series.}
-  \item{\code{eps}: }{An optional (\code{T+burnin x q}) matrix with standard normal errors to be used. Errors will be generated if not provided.}
-}}
+\item{mdl_h0}{list with \code{n} (number of observations), \code{q} (number
+of series), \code{mu} (mean vector) and \code{sigma} (covariance matrix).
+An optional element \code{eps}, an \code{n + burnin} by \code{q} matrix of
+standard normal draws, is used instead of fresh draws.}
 
-\item{burnin}{Number of simulated observations to remove from beginning. Default is \code{100}.}
+\item{burnin}{number of initial observations to discard.}
 }
 \value{
-List with simulated series and its DGP parameters.
+The input list with the simulated series added as \code{y} (\code{n} by
+\code{q}) and the errors as \code{resid}.
 }
 \description{
-This function simulates a normally distributed process.
+Draws \code{n} observations of a \code{q}-variate normal series
+with mean \code{mu} and covariance matrix \code{sigma}.
 }

@@ -1,87 +1,28 @@
 # -----------------------------------------------------------------------------
-#' @title data1
-#' 
-#' @format 
-#' \describe{Data file 1 used in example code.}
-#' @source \url{https://people.bu.edu/qu/code.htm}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
+#' @title Example data set 1
+#'
+#' @description Simulated data distributed with the GAUSS code of Qu and
+#' Perron (2007), used in their example program \code{mbreak2.prg}: 150
+#' observations on two dependent variables (columns 1 and 2) and three
+#' regressors (columns 3 to 5). In the example, equation 1 uses regressors 1
+#' and 2 and equation 2 uses regressors 1 and 3, with two breaks in the
+#' coefficients.
+#'
+#' @format A 150 by 5 numeric matrix.
+#' @source Zhongjun Qu's code page, \url{https://sites.bu.edu/qu/codes/}.
+#'
+#' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 "data1"
 # -----------------------------------------------------------------------------
-#' @title data2
-#' 
-#' @format 
-#' \describe{Data file 2 used in example code.}
-#' @source \url{https://people.bu.edu/qu/code.htm}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
-#' 
+#' @title Example data set 2
+#'
+#' @description Simulated data distributed with the GAUSS code of Qu and
+#' Perron (2007), used in their example program \code{obreak2.prg} for the
+#' locally ordered breaks model: 100 observations on two dependent variables
+#' (columns 1 and 2) and three regressors (columns 3 to 5).
+#'
+#' @format A 100 by 5 numeric matrix.
+#' @source Zhongjun Qu's code page, \url{https://sites.bu.edu/qu/codes/}.
+#'
+#' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 "data2"
-# -----------------------------------------------------------------------------
-#' @title supF_cv_05
-#' 
-#' @format 
-#' \describe{supF critical values for q=55 to q=61 and breaks 1 to 9 (not scaled by q).}
-#' 
-#' @references Bai and Pierre Perron (1998) Econometrica
-"supF_cv_05"
-# -----------------------------------------------------------------------------
-#' @title supLR_cv_05
-#' 
-#' @format 
-#' \describe{supLR critical values for q=55 to q=61 and breaks 1 to 9.}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
-#' 
-"supLR_cv_05"
-# -----------------------------------------------------------------------------
-#' @title supF_cv_10
-#' 
-#' @format 
-#' \describe{supF critical values for q=55 to q=61 and breaks 1 to 9 (not scaled by q).}
-#' 
-#' @references Bai and Pierre Perron (1998) Econometrica
-"supF_cv_10"
-# -----------------------------------------------------------------------------
-#' @title supLR_cv_10
-#' 
-#' @format 
-#' \describe{supLR critical values for q=55 to q=61 and breaks 1 to 9.}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
-#' 
-"supLR_cv_10"
-# -----------------------------------------------------------------------------
-#' @title seqF_cv_05
-#' 
-#' @format 
-#' \describe{seqF critical values for q=55 to q=61 and breaks 1 to 9 (not scaled by q).}
-#' 
-#' @references Bai and Pierre Perron (1998) Econometrica
-"seqF_cv_05"
-# -----------------------------------------------------------------------------
-#' @title seqLR_cv_05
-#' 
-#' @format 
-#' \describe{seqLR critical values for q=55 to q=61 and breaks 1 to 9.}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
-#' 
-"seqLR_cv_05"
-# -----------------------------------------------------------------------------
-#' @title seqF_cv_10
-#' 
-#' @format 
-#' \describe{seqF critical values for q=55 to q=61 and breaks 1 to 9 (not scaled by q).}
-#' 
-#' @references Bai and Pierre Perron (1998) Econometrica
-"seqF_cv_10"
-# -----------------------------------------------------------------------------
-#' @title seqLR_cv_10
-#' 
-#' @format 
-#' \describe{seqLR critical values for q=55 to q=61 and breaks 1 to 9.}
-#' 
-#' @references Qu, Zhongjun, and Pierre Perron (2007) Econometrica
-#' 
-"seqLR_cv_10"

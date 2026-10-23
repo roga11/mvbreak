@@ -3,15 +3,15 @@
 //[[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 
-//' @title convert mat to vec of transpose
+//' @title Vectorise a matrix row by row
 //' 
-//' @description This procedure 
+//' @description Stacks the rows of a matrix into a vector (GAUSS \code{vecr}).
 //' 
-//' @param \code{x}
+//' @param x matrix.
 //' 
-//' @return vectorised mat 
+//' @return Numeric vector.
 //' 
-//' @references Qu & Perron (2007)
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 arma::vec vecr(arma::mat x){
@@ -20,20 +20,19 @@ arma::vec vecr(arma::mat x){
   return(y);
 }
   
-//' @title Transform variables
+//' @title Stack a system of equations (C++ core of transf)
 //' 
-//' @description Procedure that generates the matrix of regressors (matz) and that of the dependent variable (maty)
+//' @description See \code{transf()}, which calls this.
 //' 
-//' @param y dependent variable as a matrix, with the jth row containing observations at time j
-//' @param z regressors as a matrix, with the jth row containing
+//' @param y \code{T} by \code{n} matrix of dependent variables.
+//' @param z \code{T} by \code{q} matrix of regressors.
+//' @param S selection matrix; ignored when \code{S_NULL} is 1.
+//' @param S_NULL 1 to use every regressor in every equation, 0 to apply \code{S}.
 //' 
-//' @return List of class \code{} (\code{S3} object) with attributes including:
-//' \itemize{
-//'  \item{\code{maty}: }{dependent variable as a row vector, with the (i-1)*n+jth row containing ith observation for equation j.}
-//'  \item{\code{matz}: }{regressors as a matrix}
-//' }
+//' @return List with \code{maty} and \code{matz}.
 //' 
-//' @export  
+//' @keywords internal
+//' @export
 // [[Rcpp::export]]
 List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL){
   int Ts = y.n_rows;
@@ -61,23 +60,22 @@ List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL){
   return(out);
 }
   
-//' @title optimal break partitions for a given segment
+//' @title Best single break within a segment
 //' 
-//' @description procedure to obtain an optimal one break partitions for a segment that 
-//' starts at date start and ends at date last. It return the optimal break
-//' and the associated minus likelihood value (MML).
+//' @description Finds the break date in \code{[b1, b2]} that maximises the
+//' likelihood of the segment \code{[start, last]} split in two, using the
+//' segment likelihoods stored in \code{bigvec}.
 //' 
-//' @param start beginning of the segment considered
-//' @param b1 first possible break date
-//' @param b2 last possible break date
-//' @param last end of segment considered
-//' @param bigvec vector of upper-triangular 
+//' @param start first observation of the segment.
+//' @param b1,b2 first and last admissible break dates.
+//' @param last last observation of the segment.
+//' @param bigvec segment likelihoods from \code{mlebigvec()}.
+//' @param bigt number of observations.
 //' 
-//' @references Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-//' @references Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
-//' @references Qu Perron (2007) Econometrica
-//' @references PYZ (2020) QE
+//' @return List with \code{loglikmin} (minus the maximised log-likelihood) and
+//' \code{bdate} (the break date).
 //' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List  parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt){
@@ -108,32 +106,19 @@ List  parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt){
   return(output);
 }
 
-//' @title optimal break partition for one break
+//' @title Best single break within a segment, given the coefficients
 //' 
-//' @description obtain an optimal one break partitions for a segment that starts at 
-//' date start and ends at date last,under the given coefficients.
+//' @description As \code{parti()}, but the likelihood of each half is computed
+//' from the residuals in \code{bigvec2} under given regime coefficients, as
+//' in the re-partitioning step of the restricted estimation.
 //' 
-//' @details the procedure is called only when number of breaks is one and \code{bigvec} must be a matrix of size \code{2*bigt} by \code{n} (i.e. residuals from \link{residseg}).
+//' @inheritParams parti
+//' @param bigvec2 residuals under the two regimes' coefficients, \code{2T} by \code{n} (from \code{residseg()}).
+//' @param n number of equations.
 //' 
-//' @param start beginning of the segment considered
-//' @param b1 first possible break date
-//' @param b2 last possible break date
-//' @param last end of segment considered
-//' @param bigvec vector of upper-triangular 
-//' @param bigresvec segmented residual matrix
-//' @param n number of equations
+//' @return List with \code{optmle} (minus the maximised log-likelihood) and \code{bdate}.
 //' 
-//' @return List of class \code{} (\code{S3} object) with attributes including:
-//' \itemize{
-//'   \item{\code{optmle}: }{minus the value of the log-likelihood function under the optimal partitons.}
-//'   \item{\code{bdate}: }{the break date.}
-//' }
-//' 
-//' @references Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-//' @references Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
-//' @references Qu Perron (2007) Econometrica
-//' @references PYZ (2020) QE
-//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, int n){
@@ -159,17 +144,18 @@ List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, i
   return(output);
 }
 
-//' @title Reshape mat 
+//' @title Reshape a matrix row by row
 //' 
-//' @description This procedure 
+//' @description Fills an \code{a} by \code{b} matrix row by row with the
+//' elements of \code{amat} taken row by row (GAUSS \code{reshape}). Used to
+//' turn stacked residuals into a \code{T} by \code{n} matrix.
 //' 
-//' @param \code{amat} 
-//' @param \code{a} 
-//' @param \code{b} 
+//' @param amat matrix whose elements are used.
+//' @param a,b dimensions of the result.
 //' 
-//' @return reshaped matrix
+//' @return \code{a} by \code{b} matrix.
 //' 
-//' @references Qu & Perron (2007)
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 arma::mat reshapeg(arma::mat amat, int a, int b){
@@ -209,22 +195,30 @@ arma::mat reshapeg(arma::mat amat, int a, int b){
   return(bmat);
 }
 
-//' @title Computing MLE based on a recursive formula
+//' @title Likelihoods of all segments starting at one date
 //' 
-//' @description This procedure computes MLE from a data set that starts at date 'start' and ends at date 'last'.
+//' @description Minus the Gaussian quasi-log-likelihood of the segments
+//' \code{[start, last]} for every \code{last} from \code{start + h - 1} to
+//' the end of the sample, computed with the recursive updating of Section 4.1
+//' of Qu and Perron (2007): iterated feasible GLS on the first \code{h}
+//' observations, then one observation at a time with the updating formulas
+//' of Tobing and McGilchrist (1992). The values are approximations to the
+//' exact maximised likelihoods and depend on \code{h}.
 //' 
-//' @details Note that that the first h-1 elements have no meaning, usually is initialized as zero.
+//' @param start first observation of the segments.
+//' @param maty dependent variables stacked by observation.
+//' @param matz regressors stacked by observation.
+//' @param h minimum length of a segment.
+//' @param n number of equations.
+//' @param last last observation considered.
+//' @param maxit largest number of feasible GLS iterations.
 //' 
-//' @param \code{start} starting entry of the sample used.
-//' @param \code{last} ending date of the last segment considered.
-//' @param \code{maty} vector of dependent variables, with the n*(j-1)+i th element corresponding to the jth observation from ith equation.
-//' @param \code{matz} matrix of all regressors included in the regression, arranged in the same way as maty.
-//' @param \code{h} minimal length of a segment.
-//' @param \code{n} number of equations included in the system.
+//' @return Vector of length \code{last}; entries before \code{start + h - 1} are zero.
 //' 
-//' @return It returns a vector of MLE of length last-start+1 (stored for convenience in a vector of length T).
+//' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+//' @references Tobing, H. and C. A. McGilchrist (1992), "Recursive Residuals for Multivariate Regression Models", \emph{Australian Journal of Statistics}, 34, 217-232.
 //' 
-//' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last, int maxit = 1000){
@@ -305,9 +299,19 @@ arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last
 
 
 
-//' @title MLE function
+//' @title Likelihoods of all admissible segments
 //' 
-//' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+//' @description Calls \code{mlef()} for every starting date and stores the
+//' results in the triangular layout used by \code{dating_dp()}: the segment
+//' starting at \code{i} and ending at \code{j} is at position
+//' \code{(i-1)*T + i - (i-1)*i/2 + (j - i)}.
+//' 
+//' @inheritParams mlef
+//' @param bigt number of observations.
+//' 
+//' @return Vector of length \code{T * (T + 1) / 2}.
+//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt){
@@ -322,9 +326,18 @@ arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt){
 
 
 
-//' @title MLE function
+//' @title Likelihoods of the segments starting between two dates
 //' 
-//' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
+//' @description The part of \code{mlebigvec()} for starting dates
+//' \code{start} to \code{end}; used by \code{mlebigvec_par()} to split the
+//' work across workers.
+//' 
+//' @inheritParams mlebigvec
+//' @param start,end first and last starting date.
+//' 
+//' @return Vector holding the entries of \code{mlebigvec()} for those starting dates, in order.
+//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 arma::vec mlebigvec_forpar(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end){
@@ -349,47 +362,30 @@ arma::vec mlebigvec_forpar(arma::mat maty, arma::mat matz, int h, int n, int big
 }
 
 
-//' @title MLE function
+//' @title Dynamic programming over segment likelihoods
 //' 
-//' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
-//' @export
+//' @description Finds the partition with the largest likelihood for every number
+//' of breaks from 1 to \code{m}, given the vector of segment likelihoods produced
+//' by \code{mlebigvec()}. Section 4.1 of Qu and Perron (2007).
+//' 
+//' @param bigvec vector of minus log-likelihoods of all admissible segments, as
+//' returned by \code{mlebigvec()} or \code{mlebigvec_par()}.
+//' @param h minimum length of a regime.
+//' @param m largest number of breaks considered.
+//' @param bigt number of observations.
+//' 
+//' @return List with \code{glob} (maximised log-likelihood for 1 to \code{m}
+//' breaks), \code{datevec} (upper-triangular matrix whose column \code{j} holds
+//' the break dates when \code{j} breaks are allowed) and \code{bigvec}.
+//' 
+//' @keywords internal
 // [[Rcpp::export]]
-arma::vec mlebigvec_forpar2(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end){
-  //arma::vec bigvec(bigt*(bigt+1)/2, arma::fill::zeros);
-  arma::vec bigvec;
-  arma::vec loglik;
-  for (int i =start; i<=end; i ++){
-    loglik = mlef(i, maty, matz, h, n, bigt);
-    //bigvec.rows(((i-1)*bigt+i-(i-1)*i/2)-1,(i*bigt-(i-1)*i/2)-1) = loglik.rows(i-1,bigt-1);
-    bigvec = join_cols(bigvec,loglik.rows(i-1,bigt-1));
-  }  
-  return(bigvec);
-}
-
-//' @title Compute global break dates using log-likelihood 
-//' 
-//' @description This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m. 
-//' 
-//' @references Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
-//' 
-//' @export
-// [[Rcpp::export]]
-List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt, int workers){
-  Rcpp::Environment multimnbreaks("package:multiMNbreaks");
-  Rcpp::Function mlebigvec_par = multimnbreaks["mlebigvec_par"];
+List dating_dp(arma::vec bigvec, int h, int m, int bigt){
   arma::mat datevec(m, m, arma::fill::zeros); 
   arma::mat optdat(bigt, m, arma::fill::zeros);
   arma::mat optmle(bigt, m, arma::fill::zeros);     
   arma::vec dvec(bigt, arma::fill::zeros);
   arma::vec glob(m, arma::fill::zeros);
-  arma::vec bigvec;// = mlebigvec(y, z, h, n, bigt);
-  
-  if (workers > 0){
-    bigvec  = as<arma::vec>(mlebigvec_par(y, z, h, n, bigt, workers));
-  }else{
-    bigvec  = mlebigvec(y, z, h, n, bigt);
-  }
-  
   // Section that applies the dynamic programming algorithm to look for the optimal breaks.
   // The first case is when m = 1. Here the dynamic programming algorithm is not
   // needed and one call to the parti() procedure is enough.
@@ -454,25 +450,51 @@ List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt, int wor
   return(output);
 }
 
-
-//' @title Dating global break dates using log-likelihood 
+//' @title Global break dates by quasi-maximum likelihood
 //' 
-//' @description This is the main procedure which calculates the break points that globally maximize the loglikelihood function. It returns optimal dates and associated log likelihood for all numbers of breaks less than or equal to m. 
+//' @description Computes the likelihood of every admissible segment with
+//' \code{mlebigvec()} and runs the dynamic programme \code{dating_dp()}.
+//' Section 4.1 of Qu and Perron (2007). To compute the segment likelihoods in
+//' parallel, call \code{mlebigvec_par()} and \code{dating_dp()} directly.
 //' 
-//' @param bigresvec segmented residual matrix
-//' @param h    minimum number of observations in each segment
-//' @param m    number of breaks.
+//' @param y dependent variables stacked by observation (\code{maty} from \code{transf()}).
+//' @param z regressors stacked the same way (\code{matz} from \code{transf()}).
 //' @param n number of equations.
-//' @param bigt number of observations in the sample
+//' @param h minimum length of a regime.
+//' @param m largest number of breaks considered.
+//' @param bigt number of observations.
 //' 
-//' @return List of class \code{} (\code{S3} object) with attributes including:
-//' \itemize{
-//'   \item{\code{global}: }{The maximized likelhood function under optimal partitons.}
-//'   \item{\code{datevec}: }{the estimated break dates.}
-//' }
+//' @return See \code{dating_dp()}.
 //' 
-//' @references Qu Perron (2007)
+//' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
+//' @export
+// [[Rcpp::export]]
+List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt){
+  arma::vec bigvec = mlebigvec(y, z, h, n, bigt);
+  return(dating_dp(bigvec, h, m, bigt));
+}
+
+
+//' @title Dynamic programming under given regime coefficients
+//' 
+//' @description The re-partitioning step of the restricted estimation
+//' (Section 4.2 of Qu and Perron 2007, step 3): given the residuals of every
+//' regime's coefficients over the whole sample, finds the partition that
+//' maximises the likelihood for 1 to \code{m} breaks.
+//' 
+//' @param bigvec2 residuals from \code{residseg()}, \code{T * (m + 1)} by \code{n}.
+//' @param h minimum length of a regime.
+//' @param m number of breaks.
+//' @param n number of equations.
+//' @param bigt number of observations.
+//' 
+//' @return List with \code{glob} (maximised log-likelihood for 1 to \code{m}
+//' breaks) and \code{datevec} (break dates, column \code{j} for \code{j} breaks).
+//' 
+//' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt){
@@ -550,24 +572,24 @@ List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt){
 
 
 
-//' @title Model estimation (Unrestricted)
+//' @title Unrestricted estimates given the break dates
 //' 
-//' @description procedure that estimates the coefficients under the optimal partitions. 
+//' @description Estimates the coefficients and the error covariance matrix of
+//' each regime separately by iterated feasible GLS (equation 16 of Qu and
+//' Perron 2007 and the iteration below it).
 //' 
-//' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
-//' 
-//' @param maty dependent variable.
-//' @param matz independent variable.
+//' @param maty dependent variables stacked by observation.
+//' @param matz regressors stacked by observation.
 //' @param n number of equations.
 //' @param m number of breaks.
-//' @param br break dates.
+//' @param br the \code{m} break dates.
 //' 
-//' @return List of class \code{} (\code{S3} object) with attributes including:
-//' \itemize{
-//'   \item{\code{beta}: }{the estimate of coefficients}
-//'   \item{\code{vv}: }{}
-//' }
+//' @return List with \code{beta} (\code{m + 1} by \code{p} matrix, one row per
+//' regime) and \code{vv} (the \code{m + 1} covariance matrices stacked, \code{(m + 1) n} by \code{n}).
 //' 
+//' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br){
@@ -617,33 +639,29 @@ List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br){
 
 
 
-//' @title Model estimation (with restriction)
+//' @title Restricted estimates given the break dates
 //' 
-//' @description Procedure that estimates the model allowing cross regime restrictions.
+//' @description Estimates the regime coefficients under the linear
+//' restrictions \code{beta = R delta} and the regime covariance matrices by
+//' iterated feasible GLS, starting from the unrestricted estimates of
+//' \code{estim()}. Which parameters may change is set by \code{brbeta} and
+//' \code{brv}; when only the covariance changes the coefficients are common
+//' to all regimes, and when only the coefficients change one covariance matrix
+//' is estimated from all regimes.
 //' 
-//' @details See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+//' @inheritParams estim
+//' @param bigt number of observations.
+//' @param R restriction matrix, \code{beta = R delta}.
+//' @param brbeta 1 if the regression coefficients may change, 0 otherwise.
+//' @param brv 1 if the covariance matrix may change, 0 otherwise.
+//' @param maxit largest number of feasible GLS iterations; a warning is given if reached.
 //' 
-//' @note For the current version of the code, only linear restriction is allowed. 
-//' The model includes partial structural change and block-partial structural change models.
-//' The estimation of based on iterative feasible GLS
+//' @return List with \code{beta} (the \code{(m + 1) p} stacked coefficients) and
+//' \code{vv} (the \code{m + 1} covariance matrices stacked).
 //' 
-//' @param maty: dependent variable.
-//' @param matz: independent variable.
-//' @param n: number of equations.
-//' @param m: number of breaks.
-//' @param bigt: sample size.
-//' @param br: break dates.
-//' @param R: the restriction, taking the form beta=R*teta, where teta is the vector.
-//' @param of basic parameters of the restricted model.
-//' @param brv: brv=1 if the variance-covariance matrix is allowed to change brv=0 otherwise.
-//' @param brbeta: brbeta=1 if the coefficients are allowed to change brbeta=0 otherwise.
+//' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
-//' @return List of class \code{} (\code{S3} object) with attributes including:
-//' \itemize{
-//'   \item{\code{nbeta}: }{the estimate of coefficients imposing restrictions}
-//'   \item{\code{nvv}: }{}
-//' }
-//' 
+//' @keywords internal
 //' @export
 // [[Rcpp::export]]
 List r_estim(arma::vec maty, arma::mat matz,int bigt, int n, int m, arma::vec br, arma::mat R, int brbeta, int brv, int maxit=1000){

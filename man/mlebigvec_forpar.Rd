@@ -2,13 +2,29 @@
 % Please edit documentation in R/RcppExports.R
 \name{mlebigvec_forpar}
 \alias{mlebigvec_forpar}
-\title{MLE function}
+\title{Likelihoods of the segments starting between two dates}
 \usage{
 mlebigvec_forpar(maty, matz, h, n, bigt, start, end)
 }
+\arguments{
+\item{maty}{dependent variables stacked by observation.}
+
+\item{matz}{regressors stacked by observation.}
+
+\item{h}{minimum length of a segment.}
+
+\item{n}{number of equations.}
+
+\item{bigt}{number of observations.}
+
+\item{start, end}{first and last starting date.}
+}
+\value{
+Vector holding the entries of \code{mlebigvec()} for those starting dates, in order.
+}
 \description{
-MLE function
+The part of \code{mlebigvec()} for starting dates
+\code{start} to \code{end}; used by \code{mlebigvec_par()} to split the
+work across workers.
 }
-\references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
-}
+\keyword{internal}

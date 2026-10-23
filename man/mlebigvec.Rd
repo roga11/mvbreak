@@ -2,13 +2,28 @@
 % Please edit documentation in R/RcppExports.R
 \name{mlebigvec}
 \alias{mlebigvec}
-\title{MLE function}
+\title{Likelihoods of all admissible segments}
 \usage{
 mlebigvec(maty, matz, h, n, bigt)
 }
+\arguments{
+\item{maty}{dependent variables stacked by observation.}
+
+\item{matz}{regressors stacked by observation.}
+
+\item{h}{minimum length of a segment.}
+
+\item{n}{number of equations.}
+
+\item{bigt}{number of observations.}
+}
+\value{
+Vector of length \code{T * (T + 1) / 2}.
+}
 \description{
-MLE function
+Calls \code{mlef()} for every starting date and stores the
+results in the triangular layout used by \code{dating_dp()}: the segment
+starting at \code{i} and ending at \code{j} is at position
+\code{(i-1)*T + i - (i-1)*i/2 + (j - i)}.
 }
-\references{
-Perron, Pierre, Yohei Yamamoto, and Jing Zhou (2020), "Testing Jointly for Structural Changes in the Error Variance and Coefficients of a Linear Regression Model" \emph{Quantitative Economics}, vol 11, 1019-1057.
-}
+\keyword{internal}

@@ -2,46 +2,45 @@
 % Please edit documentation in R/RcppExports.R
 \name{r_estim}
 \alias{r_estim}
-\title{Model estimation (with restriction)}
+\title{Restricted estimates given the break dates}
 \usage{
 r_estim(maty, matz, bigt, n, m, br, R, brbeta, brv, maxit = 1000L)
 }
 \arguments{
-\item{maty:}{dependent variable.}
+\item{maty}{dependent variables stacked by observation.}
 
-\item{matz:}{independent variable.}
+\item{matz}{regressors stacked by observation.}
 
-\item{n:}{number of equations.}
+\item{bigt}{number of observations.}
 
-\item{m:}{number of breaks.}
+\item{n}{number of equations.}
 
-\item{bigt:}{sample size.}
+\item{m}{number of breaks.}
 
-\item{br:}{break dates.}
+\item{br}{the \code{m} break dates.}
 
-\item{R:}{the restriction, taking the form beta=R*teta, where teta is the vector.}
+\item{R}{restriction matrix, \code{beta = R delta}.}
 
-\item{of}{basic parameters of the restricted model.}
+\item{brbeta}{1 if the regression coefficients may change, 0 otherwise.}
 
-\item{brv:}{brv=1 if the variance-covariance matrix is allowed to change brv=0 otherwise.}
+\item{brv}{1 if the covariance matrix may change, 0 otherwise.}
 
-\item{brbeta:}{brbeta=1 if the coefficients are allowed to change brbeta=0 otherwise.}
+\item{maxit}{largest number of feasible GLS iterations; a warning is given if reached.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{nbeta}: }{the estimate of coefficients imposing restrictions}
-  \item{\code{nvv}: }{}
-}
+List with \code{beta} (the \code{(m + 1) p} stacked coefficients) and
+\code{vv} (the \code{m + 1} covariance matrices stacked).
 }
 \description{
-Procedure that estimates the model allowing cross regime restrictions.
+Estimates the regime coefficients under the linear
+restrictions \code{beta = R delta} and the regime covariance matrices by
+iterated feasible GLS, starting from the unrestricted estimates of
+\code{estim()}. Which parameters may change is set by \code{brbeta} and
+\code{brv}; when only the covariance changes the coefficients are common
+to all regimes, and when only the coefficients change one covariance matrix
+is estimated from all regimes.
 }
-\details{
-See eq. 16 of Qu & Perron (2007) and the iterative procedure discussed below it.
+\references{
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }
-\note{
-For the current version of the code, only linear restriction is allowed. 
-The model includes partial structural change and block-partial structural change models.
-The estimation of based on iterative feasible GLS
-}
+\keyword{internal}

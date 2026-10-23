@@ -2,20 +2,20 @@
 % Please edit documentation in R/testing.R
 \name{olsqr}
 \alias{olsqr}
-\title{ols parameter vector estimation}
+\title{Least-squares coefficients}
 \usage{
 olsqr(y, x)
 }
-\description{
-ols parameter vector estimation
-}
-\details{
-Note: This code is an adaptation of the one originally written by Yohei 
-Yamamoto and Pierre Perron for MATLAB. Original codes can be found on 
-Pierre Perron's website: https://blogs.bu.edu/perron/codes/
-}
-\references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+\arguments{
+\item{y}{vector or matrix of dependent variables.}
 
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
+\item{x}{matrix of regressors.}
+}
+\value{
+Matrix of coefficients, one column per column of \code{y}.
+}
+\description{
+Ordinary least squares by QR decomposition, as GAUSS's
+\code{olsqr}. When the regressors are collinear the coefficients of the
+dependent columns are set to zero instead of stopping.
 }

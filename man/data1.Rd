@@ -3,20 +3,25 @@
 \docType{data}
 \name{data1}
 \alias{data1}
-\title{data1}
+\title{Example data set 1}
 \format{
-\describe{Data file 1 used in example code.}
+A 150 by 5 numeric matrix.
 }
 \source{
-\url{https://people.bu.edu/qu/code.htm}
+Zhongjun Qu's code page, \url{https://sites.bu.edu/qu/codes/}.
 }
 \usage{
 data1
 }
 \description{
-data1
+Simulated data distributed with the GAUSS code of Qu and
+Perron (2007), used in their example program \code{mbreak2.prg}: 150
+observations on two dependent variables (columns 1 and 2) and three
+regressors (columns 3 to 5). In the example, equation 1 uses regressors 1
+and 2 and equation 2 uses regressors 1 and 3, with two breaks in the
+coefficients.
 }
 \references{
-Qu, Zhongjun, and Pierre Perron (2007) Econometrica
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }
 \keyword{datasets}

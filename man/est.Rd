@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimfuncs.R
 \name{est}
 \alias{est}
-\title{Model estimation}
+\title{Break dates and coefficients under restrictions}
 \usage{
 est(
   maty,
@@ -15,39 +15,48 @@ est(
   brbeta = 1,
   brv = 1,
   h = NULL,
-  workers = 0
+  workers = 1,
+  maxit = 100
 )
 }
 \arguments{
-\item{maty}{dependent variable}
+\item{maty}{dependent variables stacked by observation (\code{maty} from \code{transf()}).}
 
-\item{matz}{independent variable}
+\item{matz}{regressors stacked by observation (\code{matz} from \code{transf()}).}
 
 \item{n}{number of equations.}
 
 \item{m}{number of breaks.}
 
-\item{bigt}{sample size}
+\item{bigt}{number of observations.}
 
-\item{trm}{trimming parameter}
+\item{trm}{trimming, as a fraction of the sample. Ignored when \code{h} is given.}
 
-\item{R}{matrix of restrictions}
+\item{R}{restriction matrix, \code{beta = R delta}. The identity (the default) imposes no restriction.}
 
-\item{brbeta}{Indicator. 1 if coefficients can change, 0 otherwise.}
+\item{brbeta}{1 if the regression coefficients may change, 0 otherwise.}
 
-\item{brv}{Indicator. 1 if covariance matrix can change, 0 otherwise.}
+\item{brv}{1 if the covariance matrix of the errors may change, 0 otherwise.}
+
+\item{h}{minimum length of a regime. By default \code{round(trm * bigt)}.}
+
+\item{workers}{number of workers used to compute the segment likelihoods; 1 is sequential.}
+
+\item{maxit}{largest number of re-partitioning iterations.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{dx}: }{the break dates}
-  \item{\code{delta}: }{the coefficients}
-}
+List with \code{dx} (the break dates), \code{rbeta} (the coefficients
+of all regimes, stacked) and \code{rvv} (the covariance matrices of all
+regimes, stacked).
 }
 \description{
-This procedure estimates the breaks and the coefficients using the restrictions, 
-based on the iterative method described in section 4.2 of Qu & Perron (2007).
+Estimates the break dates and the regime coefficients with the
+iterative procedure of Section 4.2 of Qu and Perron (2007): the dates of the
+unrestricted model start the iteration; the coefficients are then estimated
+under the restrictions \code{beta = R delta}, the sample is re-partitioned
+under those coefficients, and the two steps alternate until the dates stop
+changing.
 }
-\seealso{
-\code{\link{}}
+\references{
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

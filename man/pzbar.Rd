@@ -2,19 +2,30 @@
 % Please edit documentation in R/estimfuncs.R
 \name{pzbar}
 \alias{pzbar}
-\title{Diagonal partition of matrix with m breaks}
+\title{Regressor matrix partitioned by regime}
 \usage{
 pzbar(matz, m, bb, bigt)
 }
+\arguments{
+\item{matz}{regressors stacked by observation (from \code{transf()}).}
+
+\item{m}{number of breaks.}
+
+\item{bb}{the \code{m} break dates, as an \code{m} by 1 matrix.}
+
+\item{bigt}{number of observations.}
+}
+\value{
+Matrix with \code{nrow(matz)} rows and \code{(m + 1) * ncol(matz)} columns.
+}
 \description{
-procedure to construct the diagonal partition of matz with m break at dates b.
+Builds the block-diagonal regressor matrix of the model with
+\code{m} breaks: block \code{j} holds the rows of \code{matz} that belong to
+regime \code{j}, so that \code{maty = pzbar \%*\% beta + u} with \code{beta}
+the stacked regime coefficients.
 }
 \references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
+Bai, J. and P. Perron (2003), "Computation and Analysis of Multiple Structural Change Models", \emph{Journal of Applied Econometrics}, 18, 1-22.
 
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
-
-Qu & Perron (2007) Econometrica
-
-PYZ (2020) QE
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

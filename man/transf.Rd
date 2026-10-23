@@ -2,22 +2,37 @@
 % Please edit documentation in R/estimfuncs.R
 \name{transf}
 \alias{transf}
-\title{Transform variables}
+\title{Stack a system of equations for estimation}
 \usage{
 transf(y, z, S = NULL)
 }
 \arguments{
-\item{y}{dependent variable as a matrix, with the jth row containing observations at time j}
+\item{y}{\code{T} by \code{n} matrix of dependent variables, one column per equation.}
 
-\item{z}{regressors as a matrix, with the jth row containing}
+\item{z}{\code{T} by \code{q} matrix of all regressors in the system, without duplication.}
+
+\item{S}{\code{nq} by \code{p} selection matrix: column \code{k} picks the
+regressor (within \code{I_n \%x\% t(z_t)}) that coefficient \code{k} multiplies, so a
+zero row removes a regressor from an equation. \code{NULL} (the default) means
+every regressor enters every equation, as in a VAR.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{maty}: }{dependent variable as a row vector, with the (i-1)*n+jth row containing ith observation for equation j.}
-  \item{\code{matz}: }{regressors as a matrix}
-}
+List with \code{maty} (\code{nT} by 1) and \code{matz} (\code{nT} by \code{p}).
 }
 \description{
-Procedure that generates the matrix of regressors (matz) and that of the dependent variable (maty)
+Writes the system \code{y_t = (I_n \%x\% t(z_t)) S beta + u_t} in
+stacked form: \code{maty} holds the dependent variables observation by
+observation and \code{matz} the corresponding rows of \code{(I_n \%x\% t(z_t)) S}.
+This is the input format of \code{est()} and of the test functions.
+}
+\examples{
+y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
+# equation 1 uses regressors 1 and 2, equation 2 uses regressors 1 and 3
+S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
+stacked <- transf(y, z, S)
+dim(stacked$matz)
+
+}
+\references{
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

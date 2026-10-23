@@ -2,45 +2,29 @@
 % Please edit documentation in R/RcppExports.R
 \name{partim1}
 \alias{partim1}
-\title{optimal break partition for one break}
+\title{Best single break within a segment, given the coefficients}
 \usage{
 partim1(start, b1, b2, last, bigvec2, bigt, n)
 }
 \arguments{
-\item{start}{beginning of the segment considered}
+\item{start}{first observation of the segment.}
 
-\item{b1}{first possible break date}
+\item{b1, b2}{first and last admissible break dates.}
 
-\item{b2}{last possible break date}
+\item{last}{last observation of the segment.}
 
-\item{last}{end of segment considered}
+\item{bigvec2}{residuals under the two regimes' coefficients, \code{2T} by \code{n} (from \code{residseg()}).}
 
-\item{n}{number of equations}
+\item{bigt}{number of observations.}
 
-\item{bigvec}{vector of upper-triangular}
-
-\item{bigresvec}{segmented residual matrix}
+\item{n}{number of equations.}
 }
 \value{
-List of class \code{} (\code{S3} object) with attributes including:
-\itemize{
-  \item{\code{optmle}: }{minus the value of the log-likelihood function under the optimal partitons.}
-  \item{\code{bdate}: }{the break date.}
-}
+List with \code{optmle} (minus the maximised log-likelihood) and \code{bdate}.
 }
 \description{
-obtain an optimal one break partitions for a segment that starts at 
-date start and ends at date last,under the given coefficients.
+As \code{parti()}, but the likelihood of each half is computed
+from the residuals in \code{bigvec2} under given regime coefficients, as
+in the re-partitioning step of the restricted estimation.
 }
-\details{
-the procedure is called only when number of breaks is one and \code{bigvec} must be a matrix of size \code{2*bigt} by \code{n} (i.e. residuals from \link{residseg}).
-}
-\references{
-Bai, Jushan & Pierre Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes," \emph{Econometrica}, vol 66, 47-78.
-
-Bai, Jushan & Pierre Perron (2003), "Computation and Analysis of Multiple Structural Change Models," \emph{Journal of Applied Econometrics}, 18, 1-22.
-
-Qu Perron (2007) Econometrica
-
-PYZ (2020) QE
-}
+\keyword{internal}
