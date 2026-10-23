@@ -12,7 +12,6 @@ using namespace Rcpp;
 //' @return Numeric vector.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::vec vecr(arma::mat x){
   arma::mat xt = trans(x);
@@ -32,7 +31,6 @@ arma::vec vecr(arma::mat x){
 //' @return List with \code{maty} and \code{matz}.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL){
   int Ts = y.n_rows;
@@ -76,7 +74,6 @@ List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL){
 //' \code{bdate} (the break date).
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List  parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt){
   // procedure to obtain an optimal one break partitions for a segment that
@@ -119,7 +116,6 @@ List  parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt){
 //' @return List with \code{optmle} (minus the maximised log-likelihood) and \code{bdate}.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, int n){
   double pi = arma::datum::pi;
@@ -156,7 +152,6 @@ List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, i
 //' @return \code{a} by \code{b} matrix.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::mat reshapeg(arma::mat amat, int a, int b){
   arma::mat bmat(a,b,arma::fill::zeros);
@@ -219,7 +214,6 @@ arma::mat reshapeg(arma::mat amat, int a, int b){
 //' @references Tobing, H. and C. A. McGilchrist (1992), "Recursive Residuals for Multivariate Regression Models", \emph{Australian Journal of Statistics}, 34, 217-232.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last, int maxit = 1000){
   double pi = arma::datum::pi;
@@ -312,7 +306,6 @@ arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last
 //' @return Vector of length \code{T * (T + 1) / 2}.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt){
   arma::vec bigvec(bigt*(bigt+1)/2, arma::fill::zeros);
@@ -338,7 +331,6 @@ arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt){
 //' @return Vector holding the entries of \code{mlebigvec()} for those starting dates, in order.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::vec mlebigvec_forpar(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end){
   arma::vec bigvec((end-start+1)*(bigt-start+1)-(end-start+1)*(end-start)/2, arma::fill::zeros);
@@ -468,7 +460,6 @@ List dating_dp(arma::vec bigvec, int h, int m, int bigt){
 //' 
 //' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
-//' @export
 // [[Rcpp::export]]
 List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt){
   arma::vec bigvec = mlebigvec(y, z, h, n, bigt);
@@ -495,7 +486,6 @@ List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt){
 //' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt){
   double pi = arma::datum::pi;
@@ -572,6 +562,39 @@ List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt){
 
 
 
+// Residuals stacked by observation, as a T by n matrix (row t holds the n equations).
+static arma::mat resid_matrix(const arma::vec& res, int n){
+  return arma::reshape(res, n, res.n_elem / n).t();
+}
+
+// The sums X' Omega^{-1} X and X' Omega^{-1} y over the observations, where Omega is
+// block diagonal with isig[k] (the inverse covariance of regime k) on the observations
+// of that regime; seg holds 0, the break dates and T. The sums are formed observation by
+// observation, so no T n by T n matrix is built.
+static void gls_sums(const arma::mat& X, const arma::vec& y, int n, const arma::vec& seg,
+                     const std::vector<arma::mat>& isig, arma::mat& XtX, arma::vec& Xty){
+  XtX.zeros(X.n_cols, X.n_cols); Xty.zeros(X.n_cols);
+  for (unsigned int k = 1; k < seg.n_elem; k++){
+    for (int t = (int) seg(k - 1); t < (int) seg(k); t++){
+      arma::mat Xt = X.rows(t * n, t * n + n - 1);
+      arma::mat XtS = Xt.t() * isig[k - 1];
+      XtX += XtS * Xt; Xty += XtS * y.subvec(t * n, t * n + n - 1);
+    }
+  }
+}
+
+// The regressors of the model with m breaks: block diagonal expansion of matz by regime
+// (the C++ counterpart of pzbar()).
+static arma::mat regime_regressors(const arma::mat& matz, int n, const arma::vec& seg){
+  int m1 = seg.n_elem - 1, p = matz.n_cols;
+  arma::mat out(matz.n_rows, m1 * p, arma::fill::zeros);
+  for (int k = 0; k < m1; k++){
+    int r0 = (int) seg(k) * n, r1 = (int) seg(k + 1) * n - 1;
+    out.submat(r0, k * p, r1, (k + 1) * p - 1) = matz.rows(r0, r1);
+  }
+  return out;
+}
+
 //' @title Unrestricted estimates given the break dates
 //' 
 //' @description Estimates the coefficients and the error covariance matrix of
@@ -590,39 +613,33 @@ List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt){
 //' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br){
-  Rcpp::Environment multimnbreaks("package:multiMNbreaks");
-  Rcpp::Function reshapeg = multimnbreaks["reshapeg"];
   arma::mat beta(m+1,matz.n_cols, arma::fill::zeros);
   arma::mat vv((m+1)*n,n,arma::fill::zeros);
   arma::vec seg(m+2,arma::fill::zeros);
-  seg.rows(1,m) = br;
+  if (m > 0) seg.rows(1,m) = br;
   seg(m+1) = (maty.n_rows/n);
   for (int k = 1; k<=(m+1); k++){
     int i = seg(k-1)+1;
     int j = seg(k);
-    double id = i;
-    double jd = j;
+    double len = j - i + 1;
     arma::mat segx = matz.rows(((i-1)*n+1)-1,(j*n)-1);
     arma::vec segy = maty.rows(((i-1)*n+1)-1,(j*n)-1);
     arma::vec b = pinv(trans(segx)*segx)*trans(segx)*segy;
-    arma::mat res = segy - segx*b;
-    int bigTstmp = res.n_rows;
-    arma::mat  umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
-    arma::mat vvar = trans(umat)*umat/(jd-id+1);
+    arma::mat umat = resid_matrix(segy - segx*b, n);
+    arma::mat vvar = trans(umat)*umat/len;
     arma::mat vstar = vvar + 1;
+    arma::vec seg1 = {0.0, len};
+    arma::mat XtX; arma::vec Xty;
     int itr = 1;
     while (max(abs(vectorise(vvar-vstar)))>1e-6 & itr<200){
-      vstar = vvar; 
-      arma::mat ibigsegy(segy.n_rows/n,segy.n_rows/n, arma::fill::eye);
-      arma::mat ibigv = kron(ibigsegy,pinv(vstar));
-      b = pinv(trans(segx)*ibigv*segx)*trans(segx)*ibigv*segy;
-      res = segy - segx*b;
-      bigTstmp = res.n_rows;
-      umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
-      vvar = trans(umat)*umat/(jd-id+1);
+      vstar = vvar;
+      std::vector<arma::mat> isig(1, pinv(vstar));
+      gls_sums(segx, segy, n, seg1, isig, XtX, Xty);
+      b = pinv(XtX)*Xty;
+      umat = resid_matrix(segy - segx*b, n);
+      vvar = trans(umat)*umat/len;
       itr = itr + 1;
     }
     beta.row(k-1) = trans(b);
@@ -633,11 +650,6 @@ List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br){
   output["vv"] = vv;
   return(output);
 }
-
-
-
-
-
 
 //' @title Restricted estimates given the break dates
 //' 
@@ -662,103 +674,62 @@ List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br){
 //' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 List r_estim(arma::vec maty, arma::mat matz,int bigt, int n, int m, arma::vec br, arma::mat R, int brbeta, int brv, int maxit=1000){
-  Rcpp::Environment multimnbreaks("package:multiMNbreaks");
-  Rcpp::Function estim = multimnbreaks["estim"];
-  Rcpp::Function pzbar = multimnbreaks["pzbar"];
-  Rcpp::Function reshapeg = multimnbreaks["reshapeg"];
   int bigTs = maty.n_rows;
   arma::vec seg(m+2,arma::fill::zeros);
-  seg.rows(1,m) = br;
+  if (m > 0) seg.rows(1,m) = br;
   seg(m+1) = (bigTs/n);
-  // now estimate an unrestricted model
+  // the unrestricted estimates are the starting values
   List estim_out = estim(maty,matz,n,m,br);
   arma::mat beta = estim_out["beta"];
   arma::mat vv = estim_out["vv"];
   arma::vec nbeta;
   arma::mat nvv;
-  if (brv==1 & brbeta==1){
-    // Here we consider changes in coefficients and covariance matrix
-    arma::mat pmatz = as<arma::mat>(pzbar(matz,m,br,bigt));
-    pmatz = pmatz*R;
-    arma::mat ibigv(bigt*n,bigt*n,arma::fill::eye);
+  arma::mat XtX; arma::vec Xty;
+  std::vector<arma::mat> isig(m + 1);
+  // inverse covariance matrices, one per regime, from the stacked vv
+  auto set_isig = [&](){ for (int k = 0; k <= m; k++) isig[k] = pinv(vv.rows(k*n, (k+1)*n-1)); };
+  // covariance matrix of each regime from the residuals of the coefficient vector b on X
+  auto update_vv = [&](const arma::mat& X, const arma::vec& b){
     for (int k = 1; k<=(m+1); k++){
       int i = seg(k-1)+1;
       int j = seg(k);
-      arma::mat diagtmp(j-i+1,j-i+1,arma::fill::eye);
-      ibigv.submat(((i-1)*n+1)-1,((i-1)*n+1)-1,(j*n)-1,(j*n)-1) = kron(diagtmp, pinv(vv.rows(((k-1)*n+1)-1,(k*n)-1))); 
+      arma::mat umat = resid_matrix(maty.rows(((i-1)*n+1)-1,(j*n)-1) - X.rows(((i-1)*n+1)-1,(j*n)-1)*b, n);
+      vv.rows(((k-1)*n+1)-1,(k*n)-1) = trans(umat)*umat/(double)(j-i+1);
     }
-    arma::vec b = pinv(trans(pmatz)*ibigv*pmatz)*trans(pmatz)*ibigv*maty;
+  };
+  if (brv==1 & brbeta==1){
+    // changes in the coefficients and in the covariance matrix
+    arma::mat pmatz = regime_regressors(matz, n, seg)*R;
+    set_isig();
+    gls_sums(pmatz, maty, n, seg, isig, XtX, Xty);
+    arma::vec b = pinv(XtX)*Xty;
     arma::vec bstar = b + 10;
     int itr = 1;
     while (max(abs(bstar-b))>=1e-6 & itr<=maxit){
       bstar = b;
-      // update the covariance matrix
-      for (int k = 1; k<=(m+1); k++){
-        int i = seg(k-1)+1;
-        int j = seg(k);
-        double id = i;
-        double jd = j;
-        arma::mat tempx = pmatz.rows(((i-1)*n+1)-1,(j*n)-1);
-        arma::vec tempy = maty.rows(((i-1)*n+1)-1,(j*n)-1);
-        arma::mat res = tempy - tempx*bstar;
-        int bigTstmp = res.n_rows;
-        arma::mat umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
-        arma::mat vvar = trans(umat)*umat/(jd-id+1);
-        vv.rows(((k-1)*n+1)-1,(k*n)-1) = vvar;
-      }
-      // create the block diagonal matrix of the covariances
-      for (int k = 1; k<=(m+1); k++){
-        int i = seg(k-1)+1;
-        int j = seg(k);
-        arma::mat diagtmp(j-i+1,j-i+1,arma::fill::eye);
-        ibigv.submat(((i-1)*n+1)-1,((i-1)*n+1)-1,(j*n)-1,(j*n)-1) = kron(diagtmp, pinv(vv.rows(((k-1)*n+1)-1,(k*n)-1))); 
-      }
-      b = pinv(trans(pmatz)*ibigv*pmatz)*trans(pmatz)*ibigv*maty;
+      update_vv(pmatz, bstar);
+      set_isig();
+      gls_sums(pmatz, maty, n, seg, isig, XtX, Xty);
+      b = pinv(XtX)*Xty;
       itr = itr + 1;
     }
     nbeta = R*b;
     nvv = vv;
   }else if (brv==1 & brbeta!=1){
-    // Here we consider changes in the covariance matrix only, 
-    // iterative method is used for the optimization, with the unrestricted 
-    // estimate as the prior input. The procedure is iterated until convergence.
-    // Non-linear optimization algorithm could be used in place of the iterative procedure.
-    arma::mat ibigv(bigt*n,bigt*n,arma::fill::eye);
-    for (int k = 1; k<=(m+1); k++){
-      int i = seg(k-1)+1;
-      int j = seg(k);
-      arma::mat diagtmp(j-i+1,j-i+1,arma::fill::eye);
-      ibigv.submat(((i-1)*n+1)-1,((i-1)*n+1)-1,(j*n)-1,(j*n)-1) = kron(diagtmp, pinv(vv.rows(((k-1)*n+1)-1,(k*n)-1))); 
-    }
-    arma::vec b = pinv(trans(matz)*ibigv*matz)*trans(matz)*ibigv*maty;
+    // changes in the covariance matrix only: common coefficients, regime covariances
+    set_isig();
+    gls_sums(matz, maty, n, seg, isig, XtX, Xty);
+    arma::vec b = pinv(XtX)*Xty;
     arma::vec bstar = b + 10;
     int itr = 1;
     while (max(abs(bstar-b))>=1e-6 & itr<=maxit){
       bstar = b;
-      // update the variance-covariance matrix
-      for (int k = 1; k<=(m+1); k++){
-        int i = seg(k-1)+1;
-        int j = seg(k);
-        double id = i;
-        double jd = j;
-        arma::mat tempx = matz.rows(((i-1)*n+1)-1,(j*n)-1);
-        arma::vec tempy = maty.rows(((i-1)*n+1)-1,(j*n)-1);
-        arma::mat res = tempy - tempx*bstar;
-        int bigTstmp = res.n_rows;
-        arma::mat umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
-        arma::mat vvar = trans(umat)*umat/(jd-id+1);
-        vv.rows(((k-1)*n+1)-1,(k*n)-1) = vvar;
-      }
-      for (int k = 1; k<=(m+1); k++){
-        int i = seg(k-1)+1;
-        int j = seg(k);
-        arma::mat diagtmp(j-i+1,j-i+1,arma::fill::eye);
-        ibigv.submat(((i-1)*n+1)-1,((i-1)*n+1)-1,(j*n)-1,(j*n)-1) = kron(diagtmp, pinv(vv.rows(((k-1)*n+1)-1,(k*n)-1))); 
-      }
-      b = pinv(trans(matz)*ibigv*matz)*trans(matz)*ibigv*maty;
+      update_vv(matz, bstar);
+      set_isig();
+      gls_sums(matz, maty, n, seg, isig, XtX, Xty);
+      b = pinv(XtX)*Xty;
       itr = itr + 1;
     }
     nbeta = b;
@@ -767,38 +738,32 @@ List r_estim(arma::vec maty, arma::mat matz,int bigt, int n, int m, arma::vec br
       nbeta = join_cols(nbeta,b);
     }
   }else if (brv!=1 & brbeta==1){
-    // Here we consider changes in coefficients only
+    // changes in the coefficients only: one covariance matrix from all regimes
     arma::mat vvar(n,n,arma::fill::zeros);
     for (int k = 1; k<=(m+1); k++){
       int i = seg(k-1)+1;
       int j = seg(k);
       arma::mat tempx = matz.rows(((i-1)*n+1)-1,(j*n)-1);
       arma::vec tempy = maty.rows(((i-1)*n+1)-1,(j*n)-1);
-      arma::mat res = tempy - tempx*trans(beta.row(k-1));
-      int bigTstmp = res.n_rows;
-      arma::mat umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
+      arma::mat umat = resid_matrix(tempy - tempx*trans(beta.row(k-1)), n);
       vvar = vvar + trans(umat)*umat;
     }
     double bigtd = bigt;
     vvar = vvar/bigtd;
-    arma::mat ibigvtmp(bigt,bigt,arma::fill::eye);
-    arma::mat ibigv = kron(ibigvtmp,pinv(vvar));
-    
-    arma::mat pmatz = as<arma::mat>(pzbar(matz,m,br,bigt));
-    pmatz = pmatz*R;
-    
-    arma::vec b = pinv(trans(pmatz)*ibigv*pmatz)*trans(pmatz)*ibigv*maty;
+    arma::mat pmatz = regime_regressors(matz, n, seg)*R;
+    arma::vec seg1 = {0.0, (double) bigt};
+    std::vector<arma::mat> isig1(1, pinv(vvar));
+    gls_sums(pmatz, maty, n, seg1, isig1, XtX, Xty);
+    arma::vec b = pinv(XtX)*Xty;
     arma::vec bstar = b + 10;
     int itr = 1;
     while ((max(abs(bstar-b))>=1e-6) & (itr<=maxit)){
       bstar = b;
-      arma::mat res = maty - pmatz*bstar;
-      int bigTstmp = res.n_rows;
-      arma::mat umat = as<arma::mat>(reshapeg(res,bigTstmp/n,n));
+      arma::mat umat = resid_matrix(maty - pmatz*bstar, n);
       vvar = trans(umat)*umat/bigtd;
-      arma::mat ibigvtmp(bigt,bigt,arma::fill::eye);
-      arma::mat ibigv = kron(ibigvtmp,pinv(vvar));
-      b = pinv(trans(pmatz)*ibigv*pmatz)*trans(pmatz)*ibigv*maty;
+      isig1[0] = pinv(vvar);
+      gls_sums(pmatz, maty, n, seg1, isig1, XtX, Xty);
+      b = pinv(XtX)*Xty;
       itr = itr + 1;
     }
     nbeta = R*b;

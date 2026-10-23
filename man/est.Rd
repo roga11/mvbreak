@@ -16,7 +16,8 @@ est(
   brv = 1,
   h = NULL,
   workers = 1,
-  maxit = 100
+  maxit = 100,
+  bigvec = NULL
 )
 }
 \arguments{
@@ -43,11 +44,17 @@ est(
 \item{workers}{number of workers used to compute the segment likelihoods; 1 is sequential.}
 
 \item{maxit}{largest number of re-partitioning iterations.}
+
+\item{bigvec}{optional vector of segment likelihoods from \code{mlebigvec()},
+computed once and reused when the same data are searched for several numbers
+of breaks; \code{NULL} computes it.}
 }
 \value{
 List with \code{dx} (the break dates), \code{rbeta} (the coefficients
 of all regimes, stacked) and \code{rvv} (the covariance matrices of all
-regimes, stacked).
+regimes, stacked), followed by the inputs \code{maty}, \code{matz}, \code{n},
+\code{m}, \code{bigt}, \code{h}, \code{R}, \code{brbeta} and \code{brv}, so
+that the result can be passed to \code{confint_breaks()} and the tests.
 }
 \description{
 Estimates the break dates and the regime coefficients with the

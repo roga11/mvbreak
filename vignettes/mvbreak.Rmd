@@ -1,0 +1,206 @@
+---
+title: "Structural changes in systems of equations with mvbreak"
+author: "Gabriel Rodriguez-Rondon"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Structural changes in systems of equations with mvbreak}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+```
+
+## The model
+
+The package implements the methods of Qu and Perron (2007) for a system of
+$n$ equations observed over $T$ periods with $m$ breaks at unknown dates
+$T_1 < \dots < T_m$:
+
+$$y_t = (I_n \otimes z_t') S \beta_j + u_t, \qquad E[u_t u_t'] = \Sigma_j, \qquad t = T_{j-1} + 1, \dots, T_j,$$
+
+where $z_t$ holds every regressor of the system, $S$ selects which regressors
+enter which equation, $\beta_j$ are the coefficients of regime $j$ and
+$\Sigma_j$ its error covariance matrix. The breaks may affect the
+coefficients, the covariance matrix, or both, and coefficients can be held
+fixed across regimes. The package provides
+
+* quasi-maximum-likelihood estimates of the break dates and coefficients;
+* the sup-LR test against a fixed number of breaks, the double-maximum tests
+  UDmax and WDmax, and the sequential test Seq($\ell+1|\ell$), with critical
+  values for any number of changing parameters;
+* confidence intervals for the break dates;
+* the locally ordered breaks model of Section 5 of the paper;
+* simulation functions for Monte Carlo work.
+
+The user never builds $S$ or restriction matrices by hand: one function per
+model type does it. We use the two data sets distributed with the original
+GAUSS code throughout.
+
+```{r}
+library(mvbreak)
+y <- as.matrix(data1[, 1:2])      # two dependent variables
+z <- as.matrix(data1[, 3:5])      # a constant and two regressors
+```
+
+## Seemingly unrelated regressions
+
+In the example of the original code, equation 1 uses the first regressor and
+equation 2 the second, both with an intercept, and two breaks are allowed in
+every coefficient. `breaks_sur()` takes a list with the regressors of each
+equation; `m` is the number of breaks estimated and `trim` the minimum length
+of a regime as a fraction of the sample.
+
+```{r}
+fit <- breaks_sur(y, x = list(z[, 2, drop = FALSE], z[, 3, drop = FALSE]), m = 2, trim = 0.2)
+fit
+```
+
+The break dates 56 and 100 and the coefficients reproduce the output of the
+GAUSS program. `summary()` adds standard errors, and the usual methods are
+available.
+
+```{r}
+summary(fit)
+coef(fit)
+logLik(fit)
+```
+
+### Tests for the number of breaks
+
+`test_breaks()` computes every test for the fitted model: the sup-LR test of
+no break against 1, ..., `max_breaks` breaks, the double-maximum tests
+against an unknown number of breaks up to `max_breaks`, and the sequential
+tests. Critical values come from a table simulated for up to 60 changing
+parameters per break; cases outside it are simulated on the fly.
+
+```{r}
+test_breaks(fit)
+```
+
+`select_breaks()` applies the procedure recommended in the paper: a
+double-maximum test decides whether there is at least one break, and the
+sequential test then adds breaks one at a time. The model is refitted with the
+number of breaks chosen.
+
+```{r}
+fit3 <- breaks_sur(y, x = list(z[, 2, drop = FALSE], z[, 3, drop = FALSE]), m = 3, trim = 0.2)
+chosen <- suppressWarnings(select_breaks(fit3, max_breaks = 3))
+chosen$n_breaks
+chosen$fit$dates
+```
+
+(The warning suppressed here says that no segment of the two-break partition
+is long enough to hold a third break with this trimming, so Seq(3|2) is `NA`.)
+
+### Confidence intervals for the break dates
+
+`confint_breaks()` gives the intervals of Theorem 3 of the paper. `robust = TRUE`
+allows serially correlated errors through a HAC estimate, `prewhit = TRUE`
+prewhitens it, and `hetq = TRUE` lets the regressors' distribution differ across
+regimes. The `plot()` method shades them.
+
+```{r}
+ci <- confint_breaks(fit, level = c(0.90, 0.95))
+ci
+plot(fit, ci = ci)
+```
+
+### Partial structural change
+
+Coefficients can be held fixed across regimes by name. Here the slopes are
+constant and only the intercepts change, which is the restricted model of the
+original example (dates 50 and 99).
+
+```{r}
+fit_r <- breaks_sur(y, x = list(z[, 2, drop = FALSE], z[, 3, drop = FALSE]), m = 2, trim = 0.2,
+                    fixed = c("y1:x1", "y2:x1"))
+fit_r$dates
+test_breaks(fit_r, tests = "supLR")
+```
+
+## A VAR
+
+`breaks_varp()` builds the lags itself. `change` says what the breaks affect:
+the coefficients (`"coef"`, the default), the covariance matrix of the errors
+(`"cov"`), or both. With serially correlated errors, `robust = TRUE` replaces
+the sup-LR by a HAC-based sup-F test for the coefficients.
+
+```{r}
+var_fit <- breaks_varp(y, p = 1, m = 1, trim = 0.2, change = "both")
+var_fit$dates
+test_breaks(var_fit)
+```
+
+Whole equations can be held fixed with `fixed_equations`, for example when only
+the first equation is allowed to change.
+
+```{r}
+breaks_varp(y, p = 1, m = 1, trim = 0.2, fixed_equations = "y2")$dates
+```
+
+## Other model types
+
+* `breaks_mvreg(y, x)` fits a multivariate regression with the same regressors
+  in every equation; with `x = NULL` it is a model of means and covariance.
+* `breaks_panel(y, x)` fits a panel with unit-specific intercepts, pooled
+  slopes and breaks common to all units.
+* `breaks_system(y, z, S)` is the general entry point, where the selection
+  matrix $S$ and, if needed, the restriction matrix $R$ are supplied directly.
+
+```{r}
+breaks_mvreg(y, x = NULL, m = 1, trim = 0.2, change = "both")$dates
+```
+
+## Critical values
+
+`critical_values()` returns the critical values used by the tests for a given
+number of changing parameters `q`, number of breaks and trimming. Bai and
+Perron's response surfaces stop at `q = 10`; the shipped table goes to
+`q = 60`, and anything beyond is simulated.
+
+```{r}
+critical_values(q = 4, m = 2, trm = 0.2)
+```
+
+## Locally ordered breaks
+
+When the breaks of two groups of equations are close to each other, the
+common-break model is misspecified and treating the equations separately
+loses efficiency. `breaks_ordered()` estimates the two dates jointly, with the
+equations in `first` breaking first. The LR test of no break uses the pairs
+whose distance is at most `max_gap`, and the intervals of Theorem 4 are
+simulated.
+
+```{r}
+y2 <- as.matrix(data2[, 1:2]); z2 <- as.matrix(data2[, 3:5])
+ord <- breaks_ordered(y2, x = list(z2[, 2, drop = FALSE], z2[, 3, drop = FALSE]), trim = 0.2)
+ord
+test_breaks(ord)
+confint_breaks(ord, seed = 1)
+```
+
+## Simulation
+
+Every model type has a generator for Monte Carlo work. The object returned
+carries the true dates and coefficients in the layout of the fitted model.
+
+```{r}
+A1 <- rbind(c(0.5, 0.1), c(0.0, 0.3)); A2 <- rbind(c(-0.2, 0.0), c(0.2, 0.6))
+sim <- simulate_varp(200, coef = list(cbind(0, A1), cbind(1, A2)), sigma = diag(2), dates = 100, seed = 1)
+sim
+fit_sim <- breaks_varp(sim$y, p = 1, m = 1)
+fit_sim$dates
+cbind(true = sim$dgp$coef_matrix[, 2], estimated = coef(fit_sim)[, 2])
+```
+
+## References
+
+Bai, J. and P. Perron (1998), "Estimating and Testing Linear Models with
+Multiple Structural Changes", *Econometrica*, 66, 47–78.
+
+Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in
+Multivariate Regressions", *Econometrica*, 75, 459–502.

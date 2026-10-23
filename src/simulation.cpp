@@ -16,7 +16,6 @@ using namespace Rcpp;
 //' @return \code{n} by \code{q} matrix.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::mat randSN(int n, int q){
   double pi = arma::datum::pi;
@@ -41,7 +40,6 @@ arma::mat randSN(int n, int q){
 //' @return The input list with the simulated series added as \code{y} (\code{n} by
 //' \code{q}) and the errors as \code{resid}.
 //' 
-//' @export
 // [[Rcpp::export]]
 List simuNorm(List mdl_h0, int burnin = 0){
   // ----- DGP parameter
@@ -81,7 +79,6 @@ List simuNorm(List mdl_h0, int burnin = 0){
 //' @return Numeric vector.
 //' 
 //' @keywords internal
-//' @export
 // [[Rcpp::export]]
 arma::vec seqC(int from, int to, double by){
   arma::vec seqtmp(to-from+1,arma::fill::ones);

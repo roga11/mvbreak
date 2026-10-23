@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // vecr
 arma::vec vecr(arma::mat x);
-RcppExport SEXP _multiMNbreaks_vecr(SEXP xSEXP) {
+RcppExport SEXP _mvbreak_vecr(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // transf_cpp
 List transf_cpp(arma::mat y, arma::mat z, arma::mat S, int S_NULL);
-RcppExport SEXP _multiMNbreaks_transf_cpp(SEXP ySEXP, SEXP zSEXP, SEXP SSEXP, SEXP S_NULLSEXP) {
+RcppExport SEXP _mvbreak_transf_cpp(SEXP ySEXP, SEXP zSEXP, SEXP SSEXP, SEXP S_NULLSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,7 +38,7 @@ END_RCPP
 }
 // parti
 List parti(int start, int b1, int b2, int last, arma::vec bigvec, int bigt);
-RcppExport SEXP _multiMNbreaks_parti(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvecSEXP, SEXP bigtSEXP) {
+RcppExport SEXP _mvbreak_parti(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvecSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -54,7 +54,7 @@ END_RCPP
 }
 // partim1
 List partim1(int start, int b1, int b2, int last, arma::mat bigvec2, int bigt, int n);
-RcppExport SEXP _multiMNbreaks_partim1(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvec2SEXP, SEXP bigtSEXP, SEXP nSEXP) {
+RcppExport SEXP _mvbreak_partim1(SEXP startSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP lastSEXP, SEXP bigvec2SEXP, SEXP bigtSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -71,7 +71,7 @@ END_RCPP
 }
 // reshapeg
 arma::mat reshapeg(arma::mat amat, int a, int b);
-RcppExport SEXP _multiMNbreaks_reshapeg(SEXP amatSEXP, SEXP aSEXP, SEXP bSEXP) {
+RcppExport SEXP _mvbreak_reshapeg(SEXP amatSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -84,7 +84,7 @@ END_RCPP
 }
 // mlef
 arma::vec mlef(int start, arma::mat maty, arma::mat matz, int h, int n, int last, int maxit);
-RcppExport SEXP _multiMNbreaks_mlef(SEXP startSEXP, SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP lastSEXP, SEXP maxitSEXP) {
+RcppExport SEXP _mvbreak_mlef(SEXP startSEXP, SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP lastSEXP, SEXP maxitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -101,7 +101,7 @@ END_RCPP
 }
 // mlebigvec
 arma::vec mlebigvec(arma::mat maty, arma::mat matz, int h, int n, int bigt);
-RcppExport SEXP _multiMNbreaks_mlebigvec(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP) {
+RcppExport SEXP _mvbreak_mlebigvec(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -116,7 +116,7 @@ END_RCPP
 }
 // mlebigvec_forpar
 arma::vec mlebigvec_forpar(arma::mat maty, arma::mat matz, int h, int n, int bigt, int start, int end);
-RcppExport SEXP _multiMNbreaks_mlebigvec_forpar(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP startSEXP, SEXP endSEXP) {
+RcppExport SEXP _mvbreak_mlebigvec_forpar(SEXP matySEXP, SEXP matzSEXP, SEXP hSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP startSEXP, SEXP endSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -133,7 +133,7 @@ END_RCPP
 }
 // dating_dp
 List dating_dp(arma::vec bigvec, int h, int m, int bigt);
-RcppExport SEXP _multiMNbreaks_dating_dp(SEXP bigvecSEXP, SEXP hSEXP, SEXP mSEXP, SEXP bigtSEXP) {
+RcppExport SEXP _mvbreak_dating_dp(SEXP bigvecSEXP, SEXP hSEXP, SEXP mSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -147,7 +147,7 @@ END_RCPP
 }
 // dating_mle
 List dating_mle(arma::vec y, arma::mat z, int n, int h, int m, int bigt);
-RcppExport SEXP _multiMNbreaks_dating_mle(SEXP ySEXP, SEXP zSEXP, SEXP nSEXP, SEXP hSEXP, SEXP mSEXP, SEXP bigtSEXP) {
+RcppExport SEXP _mvbreak_dating_mle(SEXP ySEXP, SEXP zSEXP, SEXP nSEXP, SEXP hSEXP, SEXP mSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -163,7 +163,7 @@ END_RCPP
 }
 // dating_m2
 List dating_m2(arma::mat bigvec2, int h, int m, int n, int bigt);
-RcppExport SEXP _multiMNbreaks_dating_m2(SEXP bigvec2SEXP, SEXP hSEXP, SEXP mSEXP, SEXP nSEXP, SEXP bigtSEXP) {
+RcppExport SEXP _mvbreak_dating_m2(SEXP bigvec2SEXP, SEXP hSEXP, SEXP mSEXP, SEXP nSEXP, SEXP bigtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -178,7 +178,7 @@ END_RCPP
 }
 // estim
 List estim(arma::vec maty, arma::mat matz, int n, int m, arma::vec br);
-RcppExport SEXP _multiMNbreaks_estim(SEXP matySEXP, SEXP matzSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP) {
+RcppExport SEXP _mvbreak_estim(SEXP matySEXP, SEXP matzSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -193,7 +193,7 @@ END_RCPP
 }
 // r_estim
 List r_estim(arma::vec maty, arma::mat matz, int bigt, int n, int m, arma::vec br, arma::mat R, int brbeta, int brv, int maxit);
-RcppExport SEXP _multiMNbreaks_r_estim(SEXP matySEXP, SEXP matzSEXP, SEXP bigtSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP, SEXP RSEXP, SEXP brbetaSEXP, SEXP brvSEXP, SEXP maxitSEXP) {
+RcppExport SEXP _mvbreak_r_estim(SEXP matySEXP, SEXP matzSEXP, SEXP bigtSEXP, SEXP nSEXP, SEXP mSEXP, SEXP brSEXP, SEXP RSEXP, SEXP brbetaSEXP, SEXP brvSEXP, SEXP maxitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -211,9 +211,63 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ordered_grid
+List ordered_grid(arma::vec maty, arma::mat matz, int n, int bigt, arma::uvec grp1, int h, int max_gap, double tol, int maxit);
+RcppExport SEXP _mvbreak_ordered_grid(SEXP matySEXP, SEXP matzSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP grp1SEXP, SEXP hSEXP, SEXP max_gapSEXP, SEXP tolSEXP, SEXP maxitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type grp1(grp1SEXP);
+    Rcpp::traits::input_parameter< int >::type h(hSEXP);
+    Rcpp::traits::input_parameter< int >::type max_gap(max_gapSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    rcpp_result_gen = Rcpp::wrap(ordered_grid(maty, matz, n, bigt, grp1, h, max_gap, tol, maxit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fgls_null
+List fgls_null(arma::vec maty, arma::mat matz, int n, int bigt, double tol, int maxit);
+RcppExport SEXP _mvbreak_fgls_null(SEXP matySEXP, SEXP matzSEXP, SEXP nSEXP, SEXP bigtSEXP, SEXP tolSEXP, SEXP maxitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type maty(matySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type matz(matzSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type bigt(bigtSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    rcpp_result_gen = Rcpp::wrap(fgls_null(maty, matz, n, bigt, tol, maxit));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sim_ordered_argmax
+arma::mat sim_ordered_argmax(double P1j, double P2j, double P12j, double P1jp1, double P2jp1, double P12jp1, double M, double step, int B);
+RcppExport SEXP _mvbreak_sim_ordered_argmax(SEXP P1jSEXP, SEXP P2jSEXP, SEXP P12jSEXP, SEXP P1jp1SEXP, SEXP P2jp1SEXP, SEXP P12jp1SEXP, SEXP MSEXP, SEXP stepSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type P1j(P1jSEXP);
+    Rcpp::traits::input_parameter< double >::type P2j(P2jSEXP);
+    Rcpp::traits::input_parameter< double >::type P12j(P12jSEXP);
+    Rcpp::traits::input_parameter< double >::type P1jp1(P1jp1SEXP);
+    Rcpp::traits::input_parameter< double >::type P2jp1(P2jp1SEXP);
+    Rcpp::traits::input_parameter< double >::type P12jp1(P12jp1SEXP);
+    Rcpp::traits::input_parameter< double >::type M(MSEXP);
+    Rcpp::traits::input_parameter< double >::type step(stepSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_ordered_argmax(P1j, P2j, P12j, P1jp1, P2jp1, P12jp1, M, step, B));
+    return rcpp_result_gen;
+END_RCPP
+}
 // randSN
 arma::mat randSN(int n, int q);
-RcppExport SEXP _multiMNbreaks_randSN(SEXP nSEXP, SEXP qSEXP) {
+RcppExport SEXP _mvbreak_randSN(SEXP nSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -225,7 +279,7 @@ END_RCPP
 }
 // simuNorm
 List simuNorm(List mdl_h0, int burnin);
-RcppExport SEXP _multiMNbreaks_simuNorm(SEXP mdl_h0SEXP, SEXP burninSEXP) {
+RcppExport SEXP _mvbreak_simuNorm(SEXP mdl_h0SEXP, SEXP burninSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -237,7 +291,7 @@ END_RCPP
 }
 // seqC
 arma::vec seqC(int from, int to, double by);
-RcppExport SEXP _multiMNbreaks_seqC(SEXP fromSEXP, SEXP toSEXP, SEXP bySEXP) {
+RcppExport SEXP _mvbreak_seqC(SEXP fromSEXP, SEXP toSEXP, SEXP bySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -250,7 +304,7 @@ END_RCPP
 }
 // sim_supF_draws
 arma::mat sim_supF_draws(int M, int q, int h, int n, int B);
-RcppExport SEXP _multiMNbreaks_sim_supF_draws(SEXP MSEXP, SEXP qSEXP, SEXP hSEXP, SEXP nSEXP, SEXP BSEXP) {
+RcppExport SEXP _mvbreak_sim_supF_draws(SEXP MSEXP, SEXP qSEXP, SEXP hSEXP, SEXP nSEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -265,27 +319,30 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_multiMNbreaks_vecr", (DL_FUNC) &_multiMNbreaks_vecr, 1},
-    {"_multiMNbreaks_transf_cpp", (DL_FUNC) &_multiMNbreaks_transf_cpp, 4},
-    {"_multiMNbreaks_parti", (DL_FUNC) &_multiMNbreaks_parti, 6},
-    {"_multiMNbreaks_partim1", (DL_FUNC) &_multiMNbreaks_partim1, 7},
-    {"_multiMNbreaks_reshapeg", (DL_FUNC) &_multiMNbreaks_reshapeg, 3},
-    {"_multiMNbreaks_mlef", (DL_FUNC) &_multiMNbreaks_mlef, 7},
-    {"_multiMNbreaks_mlebigvec", (DL_FUNC) &_multiMNbreaks_mlebigvec, 5},
-    {"_multiMNbreaks_mlebigvec_forpar", (DL_FUNC) &_multiMNbreaks_mlebigvec_forpar, 7},
-    {"_multiMNbreaks_dating_dp", (DL_FUNC) &_multiMNbreaks_dating_dp, 4},
-    {"_multiMNbreaks_dating_mle", (DL_FUNC) &_multiMNbreaks_dating_mle, 6},
-    {"_multiMNbreaks_dating_m2", (DL_FUNC) &_multiMNbreaks_dating_m2, 5},
-    {"_multiMNbreaks_estim", (DL_FUNC) &_multiMNbreaks_estim, 5},
-    {"_multiMNbreaks_r_estim", (DL_FUNC) &_multiMNbreaks_r_estim, 10},
-    {"_multiMNbreaks_randSN", (DL_FUNC) &_multiMNbreaks_randSN, 2},
-    {"_multiMNbreaks_simuNorm", (DL_FUNC) &_multiMNbreaks_simuNorm, 2},
-    {"_multiMNbreaks_seqC", (DL_FUNC) &_multiMNbreaks_seqC, 3},
-    {"_multiMNbreaks_sim_supF_draws", (DL_FUNC) &_multiMNbreaks_sim_supF_draws, 5},
+    {"_mvbreak_vecr", (DL_FUNC) &_mvbreak_vecr, 1},
+    {"_mvbreak_transf_cpp", (DL_FUNC) &_mvbreak_transf_cpp, 4},
+    {"_mvbreak_parti", (DL_FUNC) &_mvbreak_parti, 6},
+    {"_mvbreak_partim1", (DL_FUNC) &_mvbreak_partim1, 7},
+    {"_mvbreak_reshapeg", (DL_FUNC) &_mvbreak_reshapeg, 3},
+    {"_mvbreak_mlef", (DL_FUNC) &_mvbreak_mlef, 7},
+    {"_mvbreak_mlebigvec", (DL_FUNC) &_mvbreak_mlebigvec, 5},
+    {"_mvbreak_mlebigvec_forpar", (DL_FUNC) &_mvbreak_mlebigvec_forpar, 7},
+    {"_mvbreak_dating_dp", (DL_FUNC) &_mvbreak_dating_dp, 4},
+    {"_mvbreak_dating_mle", (DL_FUNC) &_mvbreak_dating_mle, 6},
+    {"_mvbreak_dating_m2", (DL_FUNC) &_mvbreak_dating_m2, 5},
+    {"_mvbreak_estim", (DL_FUNC) &_mvbreak_estim, 5},
+    {"_mvbreak_r_estim", (DL_FUNC) &_mvbreak_r_estim, 10},
+    {"_mvbreak_ordered_grid", (DL_FUNC) &_mvbreak_ordered_grid, 9},
+    {"_mvbreak_fgls_null", (DL_FUNC) &_mvbreak_fgls_null, 6},
+    {"_mvbreak_sim_ordered_argmax", (DL_FUNC) &_mvbreak_sim_ordered_argmax, 9},
+    {"_mvbreak_randSN", (DL_FUNC) &_mvbreak_randSN, 2},
+    {"_mvbreak_simuNorm", (DL_FUNC) &_mvbreak_simuNorm, 2},
+    {"_mvbreak_seqC", (DL_FUNC) &_mvbreak_seqC, 3},
+    {"_mvbreak_sim_supF_draws", (DL_FUNC) &_mvbreak_sim_supF_draws, 5},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_multiMNbreaks(DllInfo *dll) {
+RcppExport void R_init_mvbreak(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

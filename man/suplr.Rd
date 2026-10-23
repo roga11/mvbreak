@@ -36,14 +36,6 @@ estimated dates with the model without breaks, whose coefficients and
 covariance are estimated by iterated feasible GLS. Serial correlation in the
 errors is not allowed for; see \code{supft()} for that case.
 }
-\examples{
-y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
-S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
-d <- transf(y, z, S)
-fit <- est(d$maty, d$matz, n = 2, m = 1, bigt = 150, trm = 0.2, brbeta = 1, brv = 0)
-suplr(d$maty, d$matz, 1, 2, fit$dx, fit$rbeta, 150, brbeta = 1, brv = 0)
-
-}
 \references{
 Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

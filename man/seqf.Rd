@@ -4,7 +4,7 @@
 \alias{seqf}
 \title{Sequential sup-F test, Seq(l+1 | l), robust to serial correlation}
 \usage{
-seqf(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, prewhit, trm)
+seqf(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, prewhit, trm, R_ls = NULL)
 }
 \arguments{
 \item{maty}{dependent variables stacked by observation (\code{maty} from \code{transf()}).}
@@ -28,9 +28,12 @@ seqf(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, prewhit, trm)
 \item{prewhit}{1 to prewhiten the scores with a VAR(1) before the HAC estimate, 0 otherwise.}
 
 \item{trm}{trimming, as a fraction of the sample. Ignored when \code{h} is given.}
+
+\item{R_ls}{optional list of restriction matrices, one per segment.}
 }
 \value{
-The value of the test.
+The value of the test, or \code{NA} with a warning when no segment
+is long enough to hold another break.
 }
 \description{
 As \code{seqlr()}, with the HAC-based sup-F test of

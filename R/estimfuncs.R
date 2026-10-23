@@ -8,7 +8,6 @@
 #' @return Numeric vector.
 #'
 #' @keywords internal
-#' @export
 vec <- function(a){
   v <- c(a)  
   return(v)
@@ -32,7 +31,6 @@ vec <- function(a){
 #' @references Bai, J. and P. Perron (2003), "Computation and Analysis of Multiple Structural Change Models", \emph{Journal of Applied Econometrics}, 18, 1-22.
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @export
 pzbar <- function(matz,m,bb,bigt){
   nt <- nrow(matz)
   q1 <- ncol(matz)
@@ -71,14 +69,6 @@ pzbar <- function(matz,m,bb,bigt){
 #'
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @examples
-#' y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
-#' # equation 1 uses regressors 1 and 2, equation 2 uses regressors 1 and 3
-#' S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
-#' stacked <- transf(y, z, S)
-#' dim(stacked$matz)
-#'
-#' @export
 transf <- function(y,z,S=NULL){
   # WRITE IN C++ SINCE LOOPING OVER T
   if (is.null(S)==TRUE){
@@ -136,7 +126,6 @@ transf <- function(y,z,S=NULL){
 #'
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @export
 residseg <- function(maty,matz,nbeta,q,n,m){
   bigt <- nrow(maty)/n
   bigresvec <- matrix(0,bigt*(m+1),n)
@@ -268,7 +257,6 @@ n_workers <- function(workers, fn){
 #' 
 #' @return Numeric vector of length \code{bigt * (bigt + 1) / 2}.
 #' 
-#' @export
 mlebigvec_par <- function(maty, matz, h, n, bigt, workers = 1){
   workers <- n_workers(workers, "mlebigvec_par")
   n_start <- bigt - h + 1
@@ -281,7 +269,7 @@ mlebigvec_par <- function(maty, matz, h, n, bigt, workers = 1){
   cl <- parallel::makePSOCKcluster(workers)
   on.exit(parallel::stopCluster(cl), add = TRUE)
   pieces <- parallel::clusterMap(cl, function(start, end, maty, matz, h, n, bigt){
-    multiMNbreaks::mlebigvec_forpar(maty, matz, h, n, bigt, start, end)
+    utils::getFromNamespace("mlebigvec_forpar", "mvbreak")(maty, matz, h, n, bigt, start, end)
   }, starts, ends, MoreArgs = list(maty = maty, matz = matz, h = h, n = n, bigt = bigt))
   bigvec <- unlist(pieces, use.names = FALSE)
   c(bigvec, numeric(bigt * (bigt + 1) / 2 - length(bigvec)))
@@ -320,16 +308,20 @@ mlebigvec_par <- function(maty, matz, h, n, bigt, workers = 1){
 #' @param h minimum length of a regime. By default \code{round(trm * bigt)}.
 #' @param workers number of workers used to compute the segment likelihoods; 1 is sequential.
 #' @param maxit largest number of re-partitioning iterations.
+#' @param bigvec optional vector of segment likelihoods from \code{mlebigvec()},
+#' computed once and reused when the same data are searched for several numbers
+#' of breaks; \code{NULL} computes it.
 #' 
 #' @return List with \code{dx} (the break dates), \code{rbeta} (the coefficients
 #' of all regimes, stacked) and \code{rvv} (the covariance matrices of all
-#' regimes, stacked).
+#' regimes, stacked), followed by the inputs \code{maty}, \code{matz}, \code{n},
+#' \code{m}, \code{bigt}, \code{h}, \code{R}, \code{brbeta} and \code{brv}, so
+#' that the result can be passed to \code{confint_breaks()} and the tests.
 #' 
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
-#' @export
 est <- function(maty, matz, n, m, bigt, trm, R = NULL, brbeta = 1, brv = 1, h = NULL,
-                workers = 1, maxit = 100){
+                workers = 1, maxit = 100, bigvec = NULL){
   q <- ncol(matz)
   if (is.null(R)){
     R <- diag(q*(m+1))
@@ -343,7 +335,11 @@ est <- function(maty, matz, n, m, bigt, trm, R = NULL, brbeta = 1, brv = 1, h = 
   }
   # find the optimal partition of the sample without restrictions on the
   # coefficients; this is the starting value of the iterative procedure
-  bigvec <- mlebigvec_par(maty, matz, h, n, bigt, workers)
+  if (is.null(bigvec)){
+    bigvec <- mlebigvec_par(maty, matz, h, n, bigt, workers)
+  } else if (length(bigvec) != bigt * (bigt + 1) / 2){
+    stop("est: 'bigvec' must have T (T + 1) / 2 = ", bigt * (bigt + 1) / 2, " elements.", call. = FALSE)
+  }
   datevec <- dating_dp(bigvec, h, m, bigt)$datevec
   br <- datevec[,m]
   restim_out <- r_estim(maty,matz,bigt,n,m,br,R,brbeta,brv)
@@ -368,5 +364,6 @@ est <- function(maty, matz, n, m, bigt, trm, R = NULL, brbeta = 1, brv = 1, h = 
     rbeta <- restim_out$beta
     rvv <- restim_out$vv
   }
-  return(list(dx = as.matrix(br), rbeta = rbeta, rvv = rvv))
+  list(dx = as.matrix(br), rbeta = rbeta, rvv = rvv,
+       maty = maty, matz = matz, n = n, m = m, bigt = bigt, h = h, R = R, brbeta = brbeta, brv = brv)
 }

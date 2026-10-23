@@ -10,9 +10,8 @@
 #' @return Numeric vector.
 #' 
 #' @keywords internal
-#' @export
 vecr <- function(x) {
-    .Call(`_multiMNbreaks_vecr`, x)
+    .Call(`_mvbreak_vecr`, x)
 }
 
 #' @title Stack a system of equations (C++ core of transf)
@@ -27,9 +26,8 @@ vecr <- function(x) {
 #' @return List with \code{maty} and \code{matz}.
 #' 
 #' @keywords internal
-#' @export
 transf_cpp <- function(y, z, S, S_NULL) {
-    .Call(`_multiMNbreaks_transf_cpp`, y, z, S, S_NULL)
+    .Call(`_mvbreak_transf_cpp`, y, z, S, S_NULL)
 }
 
 #' @title Best single break within a segment
@@ -48,9 +46,8 @@ transf_cpp <- function(y, z, S, S_NULL) {
 #' \code{bdate} (the break date).
 #' 
 #' @keywords internal
-#' @export
 parti <- function(start, b1, b2, last, bigvec, bigt) {
-    .Call(`_multiMNbreaks_parti`, start, b1, b2, last, bigvec, bigt)
+    .Call(`_mvbreak_parti`, start, b1, b2, last, bigvec, bigt)
 }
 
 #' @title Best single break within a segment, given the coefficients
@@ -66,9 +63,8 @@ parti <- function(start, b1, b2, last, bigvec, bigt) {
 #' @return List with \code{optmle} (minus the maximised log-likelihood) and \code{bdate}.
 #' 
 #' @keywords internal
-#' @export
 partim1 <- function(start, b1, b2, last, bigvec2, bigt, n) {
-    .Call(`_multiMNbreaks_partim1`, start, b1, b2, last, bigvec2, bigt, n)
+    .Call(`_mvbreak_partim1`, start, b1, b2, last, bigvec2, bigt, n)
 }
 
 #' @title Reshape a matrix row by row
@@ -83,9 +79,8 @@ partim1 <- function(start, b1, b2, last, bigvec2, bigt, n) {
 #' @return \code{a} by \code{b} matrix.
 #' 
 #' @keywords internal
-#' @export
 reshapeg <- function(amat, a, b) {
-    .Call(`_multiMNbreaks_reshapeg`, amat, a, b)
+    .Call(`_mvbreak_reshapeg`, amat, a, b)
 }
 
 #' @title Likelihoods of all segments starting at one date
@@ -112,9 +107,8 @@ reshapeg <- function(amat, a, b) {
 #' @references Tobing, H. and C. A. McGilchrist (1992), "Recursive Residuals for Multivariate Regression Models", \emph{Australian Journal of Statistics}, 34, 217-232.
 #' 
 #' @keywords internal
-#' @export
 mlef <- function(start, maty, matz, h, n, last, maxit = 1000L) {
-    .Call(`_multiMNbreaks_mlef`, start, maty, matz, h, n, last, maxit)
+    .Call(`_mvbreak_mlef`, start, maty, matz, h, n, last, maxit)
 }
 
 #' @title Likelihoods of all admissible segments
@@ -130,9 +124,8 @@ mlef <- function(start, maty, matz, h, n, last, maxit = 1000L) {
 #' @return Vector of length \code{T * (T + 1) / 2}.
 #' 
 #' @keywords internal
-#' @export
 mlebigvec <- function(maty, matz, h, n, bigt) {
-    .Call(`_multiMNbreaks_mlebigvec`, maty, matz, h, n, bigt)
+    .Call(`_mvbreak_mlebigvec`, maty, matz, h, n, bigt)
 }
 
 #' @title Likelihoods of the segments starting between two dates
@@ -147,9 +140,8 @@ mlebigvec <- function(maty, matz, h, n, bigt) {
 #' @return Vector holding the entries of \code{mlebigvec()} for those starting dates, in order.
 #' 
 #' @keywords internal
-#' @export
 mlebigvec_forpar <- function(maty, matz, h, n, bigt, start, end) {
-    .Call(`_multiMNbreaks_mlebigvec_forpar`, maty, matz, h, n, bigt, start, end)
+    .Call(`_mvbreak_mlebigvec_forpar`, maty, matz, h, n, bigt, start, end)
 }
 
 #' @title Dynamic programming over segment likelihoods
@@ -170,7 +162,7 @@ mlebigvec_forpar <- function(maty, matz, h, n, bigt, start, end) {
 #' 
 #' @keywords internal
 dating_dp <- function(bigvec, h, m, bigt) {
-    .Call(`_multiMNbreaks_dating_dp`, bigvec, h, m, bigt)
+    .Call(`_mvbreak_dating_dp`, bigvec, h, m, bigt)
 }
 
 #' @title Global break dates by quasi-maximum likelihood
@@ -191,9 +183,8 @@ dating_dp <- function(bigvec, h, m, bigt) {
 #' 
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
-#' @export
 dating_mle <- function(y, z, n, h, m, bigt) {
-    .Call(`_multiMNbreaks_dating_mle`, y, z, n, h, m, bigt)
+    .Call(`_mvbreak_dating_mle`, y, z, n, h, m, bigt)
 }
 
 #' @title Dynamic programming under given regime coefficients
@@ -215,9 +206,8 @@ dating_mle <- function(y, z, n, h, m, bigt) {
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
 #' @keywords internal
-#' @export
 dating_m2 <- function(bigvec2, h, m, n, bigt) {
-    .Call(`_multiMNbreaks_dating_m2`, bigvec2, h, m, n, bigt)
+    .Call(`_mvbreak_dating_m2`, bigvec2, h, m, n, bigt)
 }
 
 #' @title Unrestricted estimates given the break dates
@@ -238,9 +228,8 @@ dating_m2 <- function(bigvec2, h, m, n, bigt) {
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
 #' @keywords internal
-#' @export
 estim <- function(maty, matz, n, m, br) {
-    .Call(`_multiMNbreaks_estim`, maty, matz, n, m, br)
+    .Call(`_mvbreak_estim`, maty, matz, n, m, br)
 }
 
 #' @title Restricted estimates given the break dates
@@ -266,9 +255,86 @@ estim <- function(maty, matz, n, m, br) {
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
 #' @keywords internal
-#' @export
 r_estim <- function(maty, matz, bigt, n, m, br, R, brbeta, brv, maxit = 1000L) {
-    .Call(`_multiMNbreaks_r_estim`, maty, matz, bigt, n, m, br, R, brbeta, brv, maxit)
+    .Call(`_mvbreak_r_estim`, maty, matz, bigt, n, m, br, R, brbeta, brv, maxit)
+}
+
+#' @title Grid search for locally ordered breaks
+#'
+#' @description Evaluates the Gaussian likelihood of the two-break model of
+#' Section 5 of Qu and Perron (2007) at every admissible pair of dates
+#' \code{h < k1 <= k2 <= bigt - h}, where the coefficients of the first group
+#' of equations change after \code{k1} and those of the second group after
+#' \code{k2}, with a common covariance matrix, by iterated FGLS. The search
+#' follows the original code: for each \code{k1} the pairs are visited in
+#' increasing \code{k2}, the first from OLS and the others from the covariance
+#' matrix of the previous pair.
+#'
+#' @param maty stacked dependent variables, \code{n bigt} by 1 (from \code{transf()}).
+#' @param matz stacked regressors, \code{n bigt} by \code{q}.
+#' @param n number of equations.
+#' @param bigt number of observations.
+#' @param grp1 logical vector of length \code{q}: \code{TRUE} for the
+#' coefficients of the first group of equations.
+#' @param h minimum segment length.
+#' @param max_gap largest \code{k2 - k1} allowed for the test.
+#' @param tol convergence tolerance of the FGLS iteration.
+#' @param maxit largest number of FGLS iterations per pair.
+#'
+#' @return A list: \code{loglik}, a \code{bigt} by \code{bigt} matrix holding
+#' \code{-bigt/2 log det(Sigma)} at \code{[k1, k2]} and \code{NA} elsewhere;
+#' \code{best}, the pair with the largest likelihood (\code{k1}, \code{k2},
+#' \code{beta} of length \code{2q}: base coefficients then shifts, \code{vvar},
+#' \code{res} the \code{bigt} by \code{n} residuals, \code{loglik}); and
+#' \code{best_gap}, the same for the pairs with \code{k2 - k1 <= max_gap}.
+#'
+#' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+#'
+#' @keywords internal
+ordered_grid <- function(maty, matz, n, bigt, grp1, h, max_gap, tol = 1e-8, maxit = 1000L) {
+    .Call(`_mvbreak_ordered_grid`, maty, matz, n, bigt, grp1, h, max_gap, tol, maxit)
+}
+
+#' @title FGLS estimates of the model without breaks
+#'
+#' @description Iterated FGLS of \code{y_t = (I_n \%x\% t(z_t)) S beta + u_t}
+#' with one covariance matrix, from OLS until the covariance matrix changes by
+#' less than \code{tol}, as the original code does for the null model of the
+#' ordered-breaks test.
+#'
+#' @inheritParams ordered_grid
+#'
+#' @return List with \code{beta}, \code{vvar}, \code{res} (\code{bigt} by
+#' \code{n}) and \code{loglik}, \code{-bigt/2 log det(vvar)}.
+#'
+#' @keywords internal
+fgls_null <- function(maty, matz, n, bigt, tol = 1e-8, maxit = 1000L) {
+    .Call(`_mvbreak_fgls_null`, maty, matz, n, bigt, tol, maxit)
+}
+
+#' @title Simulated argmax of the limiting process of locally ordered breaks
+#'
+#' @description Simulates the joint distribution of Theorem 4 of Qu and
+#' Perron (2007): the argmax over \code{v1 <= v2} of the two-sided process
+#' \code{Z(v1, v2)} built from four independent Wiener processes on
+#' \code{[-M, M]}, whose drifts and scales are the ratios of the quadratic forms
+#' \code{P1j, P2j, P12j} (before the breaks) and \code{P1jp1, P2jp1, P12jp1}
+#' (after). Within each region \code{Z} is the sum of a function of \code{v1}
+#' and a function of \code{v2}, so the constrained maximum is found with
+#' running maxima in one pass over the grid.
+#'
+#' @param P1j,P2j,P12j,P1jp1,P2jp1,P12jp1 the quadratic forms of Theorem 4.
+#' @param M half-width of the grid.
+#' @param step grid spacing.
+#' @param B number of replications.
+#'
+#' @return \code{B} by 2 matrix of \code{(v1, v2)} at the maximum.
+#'
+#' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
+#'
+#' @keywords internal
+sim_ordered_argmax <- function(P1j, P2j, P12j, P1jp1, P2jp1, P12jp1, M, step, B) {
+    .Call(`_mvbreak_sim_ordered_argmax`, P1j, P2j, P12j, P1jp1, P2jp1, P12jp1, M, step, B)
 }
 
 #' @title Standard normal draws
@@ -283,9 +349,8 @@ r_estim <- function(maty, matz, bigt, n, m, br, R, brbeta, brv, maxit = 1000L) {
 #' @return \code{n} by \code{q} matrix.
 #' 
 #' @keywords internal
-#' @export
 randSN <- function(n, q) {
-    .Call(`_multiMNbreaks_randSN`, n, q)
+    .Call(`_mvbreak_randSN`, n, q)
 }
 
 #' @title Simulate a multivariate normal series
@@ -302,9 +367,8 @@ randSN <- function(n, q) {
 #' @return The input list with the simulated series added as \code{y} (\code{n} by
 #' \code{q}) and the errors as \code{resid}.
 #' 
-#' @export
 simuNorm <- function(mdl_h0, burnin = 0L) {
-    .Call(`_multiMNbreaks_simuNorm`, mdl_h0, burnin)
+    .Call(`_mvbreak_simuNorm`, mdl_h0, burnin)
 }
 
 #' @title Integer sequence
@@ -317,9 +381,8 @@ simuNorm <- function(mdl_h0, burnin = 0L) {
 #' @return Numeric vector.
 #' 
 #' @keywords internal
-#' @export
 seqC <- function(from, to, by) {
-    .Call(`_multiMNbreaks_seqC`, from, to, by)
+    .Call(`_mvbreak_seqC`, from, to, by)
 }
 
 #' @title Simulated draws of the sup-F functional for 1 to M breaks
@@ -345,6 +408,6 @@ seqC <- function(from, to, by) {
 #' 
 #' @keywords internal
 sim_supF_draws <- function(M, q, h, n, B) {
-    .Call(`_multiMNbreaks_sim_supF_draws`, M, q, h, n, B)
+    .Call(`_mvbreak_sim_supF_draws`, M, q, h, n, B)
 }
 

@@ -1,4 +1,4 @@
-#' @title multiMNbreaks: Structural Changes in Multivariate Regressions
+#' @title mvbreak: Structural Changes in Multivariate Regressions
 #'
 #' @description Estimation, testing and inference for multiple structural
 #' changes at unknown dates in a system of equations, following Qu and Perron
@@ -9,11 +9,16 @@
 #' sequential tests for the number of breaks, and simulated critical values
 #' for any number of changing parameters.
 #'
-#' @details The computational core follows the GAUSS code distributed by the
-#' authors: \code{\link{transf}} stacks the data, \code{\link{est}} estimates
-#' the break dates and coefficients, \code{\link{suplr}}, \code{\link{supft}}
-#' and \code{\link{seqlr}} compute the tests, and
-#' \code{\link{critical_values}} supplies critical values.
+#' @details Fit a model with \code{\link{breaks_varp}}, \code{\link{breaks_mvreg}},
+#' \code{\link{breaks_sur}}, \code{\link{breaks_panel}} or the general
+#' \code{\link{breaks_system}}; test for breaks and choose their number with
+#' \code{\link{test_breaks}} and \code{\link{select_breaks}}; obtain intervals
+#' for the break dates with \code{\link{confint_breaks}}; fit locally ordered
+#' breaks with \code{\link{breaks_ordered}}; and simulate data with
+#' \code{\link{simulate_varp}} and its siblings. \code{\link{critical_values}}
+#' supplies the critical values the tests use. The computational core follows
+#' the GAUSS code distributed by the authors and keeps its procedure names
+#' internally.
 #'
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' @references Bai, J. and P. Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes", \emph{Econometrica}, 66, 47-78.

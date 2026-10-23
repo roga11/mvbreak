@@ -12,7 +12,8 @@
 #   Rscript data-raw/build_cv_table.R [workers]
 # Takes about 10 CPU-hours at the default settings.
 
-suppressMessages(library(multiMNbreaks))
+suppressMessages(library(mvbreak))
+attach(asNamespace("mvbreak"), name = "mvbreak_internals", warn.conflicts = FALSE)   # the ported internals are not exported
 args <- commandArgs(trailingOnly = TRUE)
 workers <- if (length(args) >= 1) as.integer(args[1]) else 1L
 
@@ -26,20 +27,20 @@ base_seed <- 250493L
 cells <- expand.grid(q = seq_len(q_max), it = seq_along(trms))
 one_cell <- function(k){
   q <- cells$q[k]; it <- cells$it[k]; M <- m_max[it]
-  h <- multiMNbreaks:::trim_length(trms[it], n)
+  h <- mvbreak:::trim_length(trms[it], n)
   set.seed(base_seed + 1000L * it + q)
-  draws <- multiMNbreaks:::sim_supF_draws(M, q, h, n, B)
+  draws <- mvbreak:::sim_supF_draws(M, q, h, n, B)
   # supLR and Seq for 1..M breaks come from one call; UDmax and WDmax depend on
   # the largest number of breaks allowed, so they are computed for every maximum
   # from the same draws
-  full <- multiMNbreaks:::cv_from_draws(draws, q, c("supLR", "seq"), levels)
+  full <- mvbreak:::cv_from_draws(draws, q, c("supLR", "seq"), levels)
   list(supLR = full[, paste0("supLR(m=", 1:M, ")"), drop = FALSE],
        seq   = full[, paste0("Seq(", 2:(M + 1), "|", 1:M, ")"), drop = FALSE],
        UDmax = matrix(unlist(lapply(seq_len(M), function(Mx) cv_from_draws_col(draws, q, Mx, "UDmax", levels))), length(levels), M),
        WDmax = matrix(unlist(lapply(seq_len(M), function(Mx) cv_from_draws_col(draws, q, Mx, "WDmax", levels))), length(levels), M))
 }
 cv_from_draws_col <- function(draws, q, Mx, test, levels){
-  multiMNbreaks:::cv_from_draws(draws[, 1:Mx, drop = FALSE], q, test, levels)[, test]
+  mvbreak:::cv_from_draws(draws[, 1:Mx, drop = FALSE], q, test, levels)[, test]
 }
 t0 <- proc.time()[3]
 if (workers > 1){

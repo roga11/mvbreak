@@ -7,7 +7,6 @@
 #' @return Symmetric matrix \code{A} with \code{A \%*\% A = M}.
 #'
 #' @keywords internal
-#' @export
 sqrm <- function(M){
   eg <- eigen(M)
   dd <- diag(eg$values)
@@ -27,7 +26,6 @@ sqrm <- function(M){
 #' 
 #' @return Matrix of coefficients, one column per column of \code{y}.
 #' 
-#' @export
 olsqr <- function(y, x){
   x <- as.matrix(x); y <- as.matrix(y)
   b <- qr.coef(qr(x), y)
@@ -47,7 +45,6 @@ olsqr <- function(y, x){
 #' @references Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 #'
 #' @keywords internal
-#' @export
 kern <- function(x){
   # procedure to evaluate the quadratic kernel at some value x.
   del <- 6*pi*x/5
@@ -69,7 +66,6 @@ kern <- function(x){
 #' @references Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 #'
 #' @keywords internal
-#' @export
 bandw <- function(vhat){
   # procedure that compute the automatic bandwidth based on AR(1)
   # approximation for each vector of the matrix vhat. Each are given equal
@@ -103,7 +99,6 @@ bandw <- function(vhat){
 #' @references Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 #'
 #' @keywords internal
-#' @export
 jhatpr <- function(vmat){
   # procedure to compute the long-run covariance matrix of vmat.  
   nt <- nrow(vmat)
@@ -142,7 +137,6 @@ jhatpr <- function(vmat){
 #' @references Andrews, D. W. K. (1991), "Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation", \emph{Econometrica}, 59, 817-858.
 #' @references Andrews, D. W. K. and J. C. Monahan (1992), "An Improved Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimator", \emph{Econometrica}, 60, 953-966.
 #'
-#' @export
 correct <- function(res,prewhit){
   d <- ncol(res)
   nt <- nrow(res)
@@ -199,14 +193,6 @@ correct <- function(res,prewhit){
 #'
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @examples
-#' y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
-#' S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
-#' d <- transf(y, z, S)
-#' fit <- est(d$maty, d$matz, n = 2, m = 1, bigt = 150, trm = 0.2, brbeta = 1, brv = 0)
-#' suplr(d$maty, d$matz, 1, 2, fit$dx, fit$rbeta, 150, brbeta = 1, brv = 0)
-#'
-#' @export
 suplr <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv){
 
   pmatx <- pzbar(matx,m,br,bigt)
@@ -240,7 +226,7 @@ suplr <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv){
     vvar <- t(as.matrix(res[1:bigt,]))%*%as.matrix(res[1:bigt,])/(bigt)
     ulr <- -(bigt*n/2)*(log(2*pi)+1)-(bigt)/2*log(det(vvar))
   }
-  # now estimate the restricted model
+  # now estimate the model without breaks by iterated FGLS
   b <- pracma::pinv(t(matx)%*%matx)%*%t(matx)%*%maty
   res <- maty - matx%*%b
   umat <- reshapeg(res,nrow(res)/n,n)
@@ -249,8 +235,7 @@ suplr <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv){
   itr <- 1
   while (max(abs(vecr(vvar-vstar)))>1e-6 & itr<1000){
     vstar <- vvar
-    ibigv <- kronecker(diag(nrow(maty)/n), pracma::pinv(vstar))
-    b <- pracma::pinv(t(matx)%*%ibigv%*%matx)%*%t(matx)%*%ibigv%*%maty 
+    b <- gls_solve(matx, maty, n, pracma::pinv(vstar))
     res <- maty - matx%*%b
     umat <- reshapeg(res,nrow(res)/n,n)
     vvar <- t(umat)%*%umat/bigt
@@ -280,15 +265,15 @@ suplr <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv){
 #' @references Bai, J. and P. Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes", \emph{Econometrica}, 66, 47-78.
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @export
 supft <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv,prewhit){
   pmatx <- pzbar(matx,m,br,bigt)
   res <- maty - pmatx%*%rbeta
   umat <- reshapeg(res, nrow(res)/n,n)
   sigma <- t(umat)%*%umat/bigt
-  bigsig <- pracma::pinv(sqrm(kronecker(diag(bigt),sigma)))
-  xbstar <- bigsig%*%pmatx
-  ubstar <- bigsig%*%res
+  # (I_T %x% A) M for A = sigma^{-1/2}, block by block, without the T n by T n matrix
+  isqrt <- pracma::pinv(sqrm(sigma))
+  xbstar <- block_multiply(isqrt, pmatx, n)
+  ubstar <- block_multiply(isqrt, res, n)
   ubstar <- reshapeg(ubstar,nrow(ubstar)/n,n)
   tempmat <- matrix(0, bigt, ncol(xbstar))
   for (k in 1:bigt){
@@ -320,7 +305,6 @@ supft <- function(maty,matx,m,n,br,rbeta,bigt,brbeta,brv,prewhit){
 #' @references Bai, J. and P. Perron (1998), "Estimating and Testing Linear Models with Multiple Structural Changes", \emph{Econometrica}, 66, 47-78.
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
-#' @export
 suprft <- function(maty,matx,m,n,br,rbeta,R,bigt,brbeta,brv,prewhit){
   # local pmatx,res,xbstar,ubstar,ostar,sigma,umat,bigsig,tempmat,k,vmat,vbeta,vdelta;
   # local rmat,rsub,j,ftest;
@@ -329,10 +313,10 @@ suprft <- function(maty,matx,m,n,br,rbeta,R,bigt,brbeta,brv,prewhit){
   res <- maty - pmatx%*%rbeta
   umat <- reshapeg(res,nrow(res)/n,n)
   sigma <- t(umat)%*%umat/bigt
-  bigsig <- pracma::pinv(sqrm(kronecker(diag(bigt),sigma)))
+  isqrt <- pracma::pinv(sqrm(sigma))
   pmatx <- pmatx%*%R
-  xbstar <- bigsig%*%pmatx
-  ubstar <- bigsig%*%res
+  xbstar <- block_multiply(isqrt, pmatx, n)
+  ubstar <- block_multiply(isqrt, res, n)
   ubstar <- reshapeg(ubstar,nrow(ubstar)/n,n)
   tempmat <- matrix(0,bigt,ncol(xbstar))
   for (k in 1:bigt){
@@ -353,6 +337,48 @@ suprft <- function(maty,matx,m,n,br,rbeta,R,bigt,brbeta,brv,prewhit){
 }
 
 
+#' @title GLS coefficients with a common covariance matrix
+#'
+#' @description Solves \code{t(X) (I \%x\% S) X b = t(X) (I \%x\% S) y} for stacked
+#' data, where \code{S} is applied to every observation's block of \code{n}
+#' rows, summing over observations instead of forming the \code{T n} by
+#' \code{T n} matrix.
+#'
+#' @param X regressors stacked by observation.
+#' @param y dependent variables stacked by observation.
+#' @param n number of equations.
+#' @param S the \code{n} by \code{n} weight matrix (an inverse covariance matrix).
+#'
+#' @return Coefficient vector.
+#'
+#' @keywords internal
+gls_solve <- function(X, y, n, S){
+  XS <- block_multiply(S, X, n)
+  pracma::pinv(t(XS) %*% X) %*% (t(XS) %*% y)
+}
+
+#' @title Multiply every block of rows by a matrix
+#'
+#' @description Computes \code{(I_T \%x\% A) M} for a matrix \code{M} with
+#' \code{T n} rows stacked by observation, applying the \code{n} by \code{n}
+#' matrix \code{A} to each block of \code{n} rows.
+#'
+#' @param A \code{n} by \code{n} matrix.
+#' @param M matrix with \code{T n} rows.
+#' @param n number of equations.
+#'
+#' @return Matrix of the same shape as \code{M}.
+#'
+#' @keywords internal
+block_multiply <- function(A, M, n){
+  M <- as.matrix(M)
+  bigt <- nrow(M) / n
+  out <- matrix(0, nrow(M), ncol(M))
+  rows <- lapply(seq_len(n), function(i) seq(i, nrow(M), by = n))
+  for (i in seq_len(n)) for (k in seq_len(n)) if (A[i, k] != 0) out[rows[[i]], ] <- out[rows[[i]], ] + A[i, k] * M[rows[[k]], , drop = FALSE]
+  out
+}
+
 #' @title Sequential sup-LR test, Seq(l+1 | l)
 #' 
 #' @description For each of the \code{l+1} segments defined by the \code{l}
@@ -368,11 +394,11 @@ suprft <- function(maty,matx,m,n,br,rbeta,R,bigt,brbeta,brv,prewhit){
 #' @param h minimum segment length used in the global search.
 #' @param R_ls optional list of restriction matrices, one per segment.
 #' 
-#' @return The value of the test.
+#' @return The value of the test, or \code{NA} with a warning when no segment
+#' is long enough to hold another break (the original code returns 0).
 #' 
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #' 
-#' @export
 seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm, R_ls=NULL){
   lrtest <- matrix(0,nseg,1)
   dv <- matrix(0,nseg+1,1)
@@ -404,8 +430,9 @@ seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm, R_ls=NULL){
     }
   }
   if (ni == nseg){
-    warning(paste0('Given the location of the breaks from the global optimization with ',
-                   nseg-1, ' breaks there was no more place to insert an additional break that satisfies the minimal length requirement.'))
+    warning("seqlr: no segment of the partition with ", nseg - 1, " break(s) is long enough to hold another break; Seq(",
+            nseg, "|", nseg - 1, ") is NA.", call. = FALSE)
+    return(NA_real_)
   }
   maxf <- max(lrtest[1:nseg,1])
   return(maxf)
@@ -421,10 +448,10 @@ seqlr <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv, trm, R_ls=NULL){
 #' @inheritParams seqlr
 #' @param prewhit 1 to prewhiten the scores with a VAR(1) before the HAC estimate, 0 otherwise.
 #' 
-#' @return The value of the test.
+#' @return The value of the test, or \code{NA} with a warning when no segment
+#' is long enough to hold another break.
 #' 
-#' @export
-seqf <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv,prewhit, trm){
+seqf <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv,prewhit, trm, R_ls=NULL){
   lrtest <- matrix(0,nseg,1)
   dv <- matrix(0,nseg+1,1)
   dv[2:nseg,1] <- dt
@@ -439,16 +466,22 @@ seqf <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv,prewhit, trm){
       endi <- dv[is+1,1]
       segy <- as.matrix(maty[(n*(starti-1)+1):(n*endi),])
       segz <- as.matrix(matz[(n*(starti-1)+1):(n*endi),])
-      estout <- est(segy,segz,n,1,length,trm,diag(ncol(matz)*2),1,0,h=hs)
-      lrtest[is,1] <- supft(segy,segz,1,n,estout$dx,estout$rbeta,length,1,0,prewhit)
+      if (is.null(R_ls)){
+        estout <- est(segy,segz,n,1,length,trm,diag(ncol(matz)*2),1,0,h=hs)
+        lrtest[is,1] <- supft(segy,segz,1,n,estout$dx,estout$rbeta,length,1,0,prewhit)
+      }else{
+        estout <- est(segy,segz,n,1,length,trm,R_ls[[is]],1,0,h=hs)
+        lrtest[is,1] <- suprft(segy,segz,1,n,estout$dx,estout$rbeta,R_ls[[is]],length,1,0,prewhit)
+      }
     }else{
       ni <- ni + 1
       lrtest[is,1] <- 0
     }
   }
   if (ni == nseg){
-    warning(paste0('Given the location of the breaks from the global optimization with ',
-                   nseg-1,' breaks there was no more place to insert an additional break that satisfies the minimal length requirement.')) 
+    warning("seqf: no segment of the partition with ", nseg - 1, " break(s) is long enough to hold another break; Seq(",
+            nseg, "|", nseg - 1, ") is NA.", call. = FALSE)
+    return(NA_real_)
   }
   maxf <- max(lrtest[1:nseg,1])
   return(maxf)
@@ -473,7 +506,6 @@ seqf <- function(maty,matz,n,dt,nseg,bigt,h,brbeta,brv,prewhit, trm){
 #'
 #' @importFrom stats pnorm
 #' @keywords internal
-#' @export
 funcg <- function(x,bet,alph,b,deld,gam){
   if (x <= 0){
     xb <- bet*sqrt(abs(x))
@@ -497,63 +529,50 @@ funcg <- function(x,bet,alph,b,deld,gam){
 
 
 
-#' @title Quantiles for a break-date confidence interval
+#' @title Quantiles of the break-date distribution
 #'
-#' @description The 2.5, 5, 95 and 97.5 percent quantiles of the limiting
-#' distribution of a break-date estimate, found by a bracketing search on
-#' \code{funcg()}. The three inputs summarise the change in the regression
-#' across the break: \code{eta} is the ratio of the drift parameters on the two
-#' sides, and \code{phi1s} and \code{phi2s} the ratios of long-run variance to
-#' drift on each side (Qu and Perron 2007, Theorem 3). If the search does not
-#' converge it stops with an error.
+#' @description Quantiles of the limiting distribution of a break-date
+#' estimate under shrinking shifts (Bai 1997; Qu and Perron 2007, Theorem 3),
+#' obtained by root finding on the distribution function \code{funcg()}. The
+#' three inputs summarise the change across the break: \code{eta} is the
+#' ratio of the drift parameters of the two regimes, and \code{phi1s} and
+#' \code{phi2s} the ratios of long-run variance to drift on each side. The
+#' search bracket widens until it contains every requested quantile; when the
+#' inputs are not finite and positive the result is \code{NA}.
 #'
 #' @param eta ratio of the second-regime to the first-regime drift.
 #' @param phi1s,phi2s scale parameters of the first and second regime.
+#' @param probs probabilities of the quantiles.
 #'
-#' @return Vector of four quantiles, in the order 2.5, 5, 95, 97.5 percent.
+#' @return Vector of quantiles, one per element of \code{probs}.
 #'
 #' @references Bai, J. (1997), "Estimation of a Change Point in Multiple Regression Models", \emph{Review of Economics and Statistics}, 79, 551-563.
 #' @references Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 #'
 #' @keywords internal
-#' @export
-cvg <- function(eta,phi1s,phi2s){
-  cvec <- matrix(0, 4, 1)
+cvg <- function(eta, phi1s, phi2s, probs = c(0.025, 0.05, 0.95, 0.975)){
+  if (any(!is.finite(c(eta, phi1s, phi2s))) || eta <= 0 || phi1s <= 0 || phi2s <= 0){
+    return(rep(NA_real_, length(probs)))
+  }
   a <- phi1s/phi2s
   gam <- ((phi2s/phi1s)+1)*eta/2
   b <- sqrt(phi1s*eta/phi2s)
   deld <- sqrt(phi2s*eta/phi1s)+b/2
   alph <- a*(1+a)/2
   bet <- (1+2*a)/2
-  sig <- c(0.025, 0.05, 0.95, 0.975)
-  isig <- 1
-  while (isig <=4){
-    upb <- max(c(200,(100/gam)))
-    lwb <- -200
-    crit <- 999999
-    cct <- 1
-    while (abs(crit) >= .00001){
-      cct <- cct + 1
-      if (cct > 1000){
-        stop('the procedure to get critical values for the break dates has 
-             reached the upper bound on the number of iterations. This occured
-             in the procedure cvg. The resulting confidence interval for this
-             break date is incorect')
-      }else{
-        xx <- lwb+(upb-lwb)/20
-        pval <- funcg(xx,bet,alph,b,deld,gam)
-        crit <- pval-sig[isig]
-        if (crit <= 0){
-          lwb <- xx  
-        }else{
-          upb <- xx
-        }
-      }
-    }
-    cvec[isig,1] <- xx
-    isig <- isig + 1
-  }
-  return(cvec)
+  g <- function(x) funcg(x, bet, alph, b, deld, gam)
+  # widen the bracket until it contains every quantile, stopping where the
+  # distribution function can no longer be evaluated
+  lwb <- -200; upb <- max(200, 100/gam)
+  k <- 0
+  while (k < 60 && is.finite(g(2*lwb)) && g(lwb) > min(probs)){ lwb <- 2*lwb; k <- k + 1 }
+  k <- 0
+  while (k < 60 && is.finite(g(2*upb)) && g(upb) < max(probs)){ upb <- 2*upb; k <- k + 1 }
+  gl <- g(lwb); gu <- g(upb)
+  vapply(probs, function(pr){
+    if (!is.finite(gl) || !is.finite(gu) || gl >= pr || gu <= pr) return(NA_real_)
+    stats::uniroot(function(x) g(x) - pr, c(lwb, upb), tol = 1e-10)$root
+  }, numeric(1))
 }
 
 
@@ -572,7 +591,6 @@ cvg <- function(eta,phi1s,phi2s){
 #'
 #' @references Bai, J. and P. Perron (2003), "Critical Values for Multiple Structural Change Tests", \emph{Econometrics Journal}, 6, 72-78.
 #'
-#' @export
 cvlr <- function(k,q,trm){
   cv90 <- (7.551+1.718*q-0.041*q*q-0.610*k-15.846*trm+0.025*(q/trm))*exp(0.338/k-0.014/(trm*k))
   cv95 <- (8.238+1.756*q-0.043*q*q-0.659*k-15.436*trm+0.025*(q/trm))*exp(0.389/k-0.013/(trm*k))
@@ -595,7 +613,6 @@ cvlr <- function(k,q,trm){
 #'
 #' @references Bai, J. and P. Perron (2003), "Critical Values for Multiple Structural Change Tests", \emph{Econometrics Journal}, 6, 72-78.
 #'
-#' @export
 cvwd <- function(q,trm){
   cv90 <- (7.316+3.128*q-8.624*trm)*exp(-0.029*q-0.412*trm)
   cv95 <- (9.039+3.318*q-9.969*trm)*exp(-0.030*q-0.327*trm)
@@ -618,7 +635,6 @@ cvwd <- function(q,trm){
 #'
 #' @references Bai, J. and P. Perron (2003), "Critical Values for Multiple Structural Change Tests", \emph{Econometrics Journal}, 6, 72-78.
 #'
-#' @export
 supseq <- function(l,q,trm){
   cv90 <- (8.397+3.702*q-0.209*q*q+0.317*(l+1)-3.736/(l+1)-11.596*trm)*exp(-0.027*q+0.005*q*q)
   cv95 <- (9.879+4.086*q-0.232*q*q+0.322*(l+1)-3.687/(l+1)-11.931*trm)*exp(-0.039*q+0.006*q*q)

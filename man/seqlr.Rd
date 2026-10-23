@@ -30,7 +30,8 @@ seqlr(maty, matz, n, dt, nseg, bigt, h, brbeta, brv, trm, R_ls = NULL)
 \item{R_ls}{optional list of restriction matrices, one per segment.}
 }
 \value{
-The value of the test.
+The value of the test, or \code{NA} with a warning when no segment
+is long enough to hold another break (the original code returns 0).
 }
 \description{
 For each of the \code{l+1} segments defined by the \code{l}

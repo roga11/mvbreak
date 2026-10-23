@@ -1,3 +1,3 @@
-#' @useDynLib multiMNbreaks, .registration = TRUE
+#' @useDynLib mvbreak, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL

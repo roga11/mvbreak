@@ -175,8 +175,8 @@ cv_from_table <- function(q, m, trm, test, level){
 #'
 #' @keywords internal
 cv_table_internal <- function(){
-  if (exists(".cv_table", envir = asNamespace("multiMNbreaks"), inherits = FALSE)){
-    get(".cv_table", envir = asNamespace("multiMNbreaks"))
+  if (exists(".cv_table", envir = asNamespace("mvbreak"), inherits = FALSE)){
+    get(".cv_table", envir = asNamespace("mvbreak"))
   } else {
     NULL
   }
@@ -215,7 +215,7 @@ sim_draws <- function(M, q, h, n, B, seed, workers, fn){
   on.exit(parallel::stopCluster(cl), add = TRUE)
   parallel::clusterSetRNGStream(cl, iseed = seed)
   pieces <- parallel::clusterMap(cl, function(b, M, q, h, n){
-    sim <- utils::getFromNamespace("sim_supF_draws", "multiMNbreaks")
+    sim <- utils::getFromNamespace("sim_supF_draws", "mvbreak")
     sim(M, q, h, n, b)
   }, B_per, MoreArgs = list(M = M, q = q, h = h, n = n))
   do.call(rbind, pieces)

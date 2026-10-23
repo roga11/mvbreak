@@ -25,14 +25,6 @@ stacked form: \code{maty} holds the dependent variables observation by
 observation and \code{matz} the corresponding rows of \code{(I_n \%x\% t(z_t)) S}.
 This is the input format of \code{est()} and of the test functions.
 }
-\examples{
-y <- as.matrix(data1[, 1:2]); z <- as.matrix(data1[, 3:5])
-# equation 1 uses regressors 1 and 2, equation 2 uses regressors 1 and 3
-S <- rbind(c(1,0,0,0), c(0,1,0,0), c(0,0,0,0), c(0,0,1,0), c(0,0,0,0), c(0,0,0,1))
-stacked <- transf(y, z, S)
-dim(stacked$matz)
-
-}
 \references{
 Qu, Z. and P. Perron (2007), "Estimating and Testing Structural Changes in Multivariate Regressions", \emph{Econometrica}, 75, 459-502.
 }

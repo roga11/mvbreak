@@ -2,26 +2,29 @@
 % Please edit documentation in R/testing.R
 \name{cvg}
 \alias{cvg}
-\title{Quantiles for a break-date confidence interval}
+\title{Quantiles of the break-date distribution}
 \usage{
-cvg(eta, phi1s, phi2s)
+cvg(eta, phi1s, phi2s, probs = c(0.025, 0.05, 0.95, 0.975))
 }
 \arguments{
 \item{eta}{ratio of the second-regime to the first-regime drift.}
 
 \item{phi1s, phi2s}{scale parameters of the first and second regime.}
+
+\item{probs}{probabilities of the quantiles.}
 }
 \value{
-Vector of four quantiles, in the order 2.5, 5, 95, 97.5 percent.
+Vector of quantiles, one per element of \code{probs}.
 }
 \description{
-The 2.5, 5, 95 and 97.5 percent quantiles of the limiting
-distribution of a break-date estimate, found by a bracketing search on
-\code{funcg()}. The three inputs summarise the change in the regression
-across the break: \code{eta} is the ratio of the drift parameters on the two
-sides, and \code{phi1s} and \code{phi2s} the ratios of long-run variance to
-drift on each side (Qu and Perron 2007, Theorem 3). If the search does not
-converge it stops with an error.
+Quantiles of the limiting distribution of a break-date
+estimate under shrinking shifts (Bai 1997; Qu and Perron 2007, Theorem 3),
+obtained by root finding on the distribution function \code{funcg()}. The
+three inputs summarise the change across the break: \code{eta} is the
+ratio of the drift parameters of the two regimes, and \code{phi1s} and
+\code{phi2s} the ratios of long-run variance to drift on each side. The
+search bracket widens until it contains every requested quantile; when the
+inputs are not finite and positive the result is \code{NA}.
 }
 \references{
 Bai, J. (1997), "Estimation of a Change Point in Multiple Regression Models", \emph{Review of Economics and Statistics}, 79, 551-563.
